@@ -3,22 +3,36 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class JarvisSystem {
 	
 	ArrayList<Elevator> elevators;
-	HashMap<Integer, Boolean> externalRequestedFloors;
-	ElevatorBroker elevatorBroker;
+	ElevatorBackUp elevatorBackUp = new ElevatorBackUp("elevatorBackUp", ElevatorStatus.OFF);
+	private Map<Integer, Boolean> externalRequestedFloors;
+	ElevatorBreaker elevatorBroker;
+	
+	public void initElevators() {
+		Elevator elevator1 = new Elevator("elevator1", ElevatorStatus.MOVE);
+		Elevator elevator2 = new Elevator("elevator2", ElevatorStatus.MOVE);
+		elevators.add(elevator1);
+		elevators.add(elevator2);
+	}
+	
+	public void initRequestedFloors() {
+		this.setExternalRequestedFloors(new ConcurrentHashMap<>());
+		for (int i=Configuration.MIN_FLOOR; i<=Configuration.MAX_FLOOR; i++) {
+			this.getExternalRequestedFloors().put(i, false);
+		}
+	}
 	
 	public JarvisSystem() {
-		this.externalRequestedFloors = new HashMap<>();
-		for (int i=Configuration.MIN_FLOOR; i<=Configuration.MAX_FLOOR; i++) {
-			this.externalRequestedFloors.put(i, false);
-		}
+		this.initElevators();
+		this.initRequestedFloors();
 	}
 
 	public void callElevator(int floor) {
-		this.externalRequestedFloors.put(floor, true);
+		this.getExternalRequestedFloors().put(floor, true);
 		
 	}
 	
@@ -26,7 +40,7 @@ public class JarvisSystem {
 		for (int i=Configuration.MIN_FLOOR; i<=Configuration.MAX_FLOOR; i++) {
 			boolean restoreRequested = requestedFloors.get(i);
 			if (restoreRequested) {
-				externalRequestedFloors.put(i, restoreRequested);
+				getExternalRequestedFloors().put(i, restoreRequested);
 			}
 		}
 	}
@@ -70,6 +84,14 @@ public class JarvisSystem {
 		}
 		return requestedFloors;
 		
+	}
+
+	public Map<Integer, Boolean> getExternalRequestedFloors() {
+		return externalRequestedFloors;
+	}
+
+	public void setExternalRequestedFloors(Map<Integer, Boolean> externalRequestedFloors) {
+		this.externalRequestedFloors = externalRequestedFloors;
 	}
 
 }

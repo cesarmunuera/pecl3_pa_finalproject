@@ -10,5 +10,6 @@ public class Configuration {
 	public static final int MAX_BROKE_SECONDS = 30;
 	public static final int MIN_REPAIR_SECONDS = 10;
 	public static final int MAX_REPAIR_SECONDS = 15;
+	public static final double MOVE_SECONDS = 0.5;
 
 }

@@ -1,16 +1,14 @@
 import java.util.ArrayList;
 import java.util.Random;
 
-public class ElevatorBroker extends Thread {
+public class ElevatorBreaker extends Thread {
 	
 	ArrayList<Elevator> elevators;
+	ElevatorBackUp elevatorBackUp;
 	
-	public ElevatorBroker(ArrayList<Elevator> elevators) {
+	public ElevatorBreaker(ArrayList<Elevator> elevators, ElevatorBackUp elevatorBackUp) {
 		this.elevators = elevators;
-	}
-	
-	public void broke() {
-		
+		this.elevatorBackUp = elevatorBackUp;
 	}
 	
 	public void sleepRandomTime() {
@@ -26,23 +24,24 @@ public class ElevatorBroker extends Thread {
 	public void brokeRandomElevator() {
 		boolean choosen = false;
 		Random r = new Random();
+		Elevator elevatorBack = this.elevators.get(this.elevators.size()+1);
+		
 		while (!choosen) {
-			int randomNum = r.nextInt(this.elevators.size() + 1);
+			int randomNum = r.nextInt(this.elevators.size());
 			Elevator elevator = this.elevators.get(randomNum);
-			if (elevator.status == ElevatorStatus.STOPPED || elevator.status == ElevatorStatus.MOVE) {
+			if (elevator.status == ElevatorStatus.STOPPED) {
 				elevator.broke();
+				elevatorBack.status = ElevatorStatus.STOPPED;
 				choosen = true;
 			}
 		}
-		
-		
-		
 	}
 	
 	@Override
 	public void run() {
 		while (true) {
-			broke();
+			sleepRandomTime();
+			brokeRandomElevator();
 			
 		}
 	}

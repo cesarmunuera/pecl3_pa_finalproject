@@ -15,7 +15,7 @@ public class ElevatorStub {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Elevator elevator = new Elevator();
+        Elevator elevator = new Elevator("elevator", ElevatorStatus.STOPPED);
         
         elevator.start();
         try {
