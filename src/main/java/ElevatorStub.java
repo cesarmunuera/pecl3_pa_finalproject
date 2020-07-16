@@ -3,19 +3,27 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package javaapplication19;
+
 
 /**
  *
  * @author cesar
  */
-public class JavaApplication19 {
+public class ElevatorStub {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        Elevator elevator = new Elevator();
+        
+        elevator.start();
+        try {
+			elevator.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
 }
