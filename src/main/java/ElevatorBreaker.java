@@ -5,6 +5,7 @@ public class ElevatorBreaker extends Thread {
 	
 	ArrayList<Elevator> elevators;
 	ElevatorBackUp elevatorBackUp;
+	Random random = new Random();
 	
 	public ElevatorBreaker(ArrayList<Elevator> elevators, ElevatorBackUp elevatorBackUp) {
 		this.elevators = elevators;
@@ -23,15 +24,13 @@ public class ElevatorBreaker extends Thread {
 	
 	public void brokeRandomElevator() {
 		boolean choosen = false;
-		Random r = new Random();
-		Elevator elevatorBack = this.elevators.get(this.elevators.size()+1);
 		
 		while (!choosen) {
-			int randomNum = r.nextInt(this.elevators.size());
+			int randomNum = this.random.nextInt(this.elevators.size());
 			Elevator elevator = this.elevators.get(randomNum);
 			if (elevator.status == ElevatorStatus.STOPPED) {
 				elevator.broke();
-				elevatorBack.status = ElevatorStatus.STOPPED;
+				elevatorBackUp.status = ElevatorStatus.STOPPED;
 				choosen = true;
 			}
 		}
