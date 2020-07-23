@@ -1,10 +1,9 @@
 
-
 public enum ElevatorStatus {
-	
-	STOPPED,
-	BROKEN,
-	MOVE,
-	OFF
+
+    STOPPED,
+    BROKEN,
+    MOVE,
+    OFF
 
 }
