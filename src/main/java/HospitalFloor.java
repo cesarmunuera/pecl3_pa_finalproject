@@ -3,14 +3,20 @@ public class HospitalFloor {
 
     int floor;
     JarvisSystem jarvisSystem;
+    JarvisRemoteControl jarvisRemoteControl;
     boolean elevatorInFloor = false;
     boolean waitingElevator = false;
 
-    public void callElevator() {
-        this.jarvisSystem.callElevator(this.floor);
+    public HospitalFloor(int floor) {
+		this.floor = floor;
+		this.jarvisRemoteControl = new JarvisRemoteControl(this.jarvisSystem, this.floor);
+	}
+
+	public void callElevator() {
+        this.jarvisRemoteControl.callElevator();
     }
 
-    public Elevator waitElevator() {
+    public Elevator getElevator() {
         return this.jarvisSystem.getElevatorInFloor(this.floor);
     }
 

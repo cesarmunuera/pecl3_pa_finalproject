@@ -2,13 +2,14 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 
 public class Elevator extends Thread {
 
     String id;
     int currentFloor;
     int previousFloor;
-    Object spaceSemaphore;
+    Semaphore spaceSemaphore = new Semaphore(Configuration.MAX_PEOPLE, true);
     JarvisSystem jarvisSystem = new JarvisSystem();
     ArrayList<Person> space = new ArrayList<Person>(Configuration.MAX_PEOPLE);
     Map<Integer, Boolean> requestedFloors;
@@ -49,6 +50,7 @@ public class Elevator extends Thread {
 
     public void evacuatePeople() {
         for (Person person : this.space) {
+        	person.floor = this.currentFloor;
             person.interrupt();
         }
     }
@@ -66,6 +68,7 @@ public class Elevator extends Thread {
             this.previousFloor = this.currentFloor;
             this.currentFloor--;
         }
+        this.jarvisSystem.notifyFloorMove(this.currentFloor);
     }
 
     public boolean checkRemainingRequestedFloors(int from, int to, Map<Integer, Boolean> map) {
@@ -145,6 +148,21 @@ public class Elevator extends Thread {
             this.move();
         }
     }
+    
+    public void waitInFloor() {
+    	this.status = ElevatorStatus.EXITING;
+        try {
+			sleep((long) 300);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+        this.status = ElevatorStatus.STOPPED;
+        try {
+			sleep((long) 300);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+    }
 
     public void stopInFloor() {
         if (this.status == ElevatorStatus.BROKEN) {
@@ -155,9 +173,10 @@ public class Elevator extends Thread {
         boolean floorExternalRequired = this.jarvisSystem.getExternalRequestedFloors().get(this.currentFloor);
         if (floorInternalRequired || floorExternalRequired) {
             System.out.println("Stopping in floor " + this.currentFloor);
-            this.status = ElevatorStatus.STOPPED;
             this.requestedFloors.put(this.currentFloor, false);
             this.jarvisSystem.getExternalRequestedFloors().put(this.currentFloor, false);
+            this.jarvisSystem.notifyFloorStop(this.currentFloor);
+            this.waitInFloor();
         }
     }
 
@@ -171,13 +190,19 @@ public class Elevator extends Thread {
 		}
 		this.initRequestedFloors();
 		this.status = ElevatorStatus.STOPPED;
+		this.jarvisSystem.notifyElevatorRepaired();
 	}
 
-	public void enter(Object person) {
-		// enter to elevator
-		// spaceSemaphore.get()
-		// space.add(person)
+	public boolean enter(Person person) {
+		boolean inside = false;
+		inside = this.spaceSemaphore.tryAcquire();
+		if (inside) {
+			this.space.add(person);
+		}
+		
+		return inside;
 	}
+	
 	
 	public void requestFloor(int floor) {
 		this.requestedFloors.put(floor, true);
@@ -185,10 +210,15 @@ public class Elevator extends Thread {
 	
 	
 	public void waitFloor(Person person) {
-		while (true) {
-			// mirar la planta
-			// if currentFloor == person.targetFloor -> wait
+		try {
+			while (true) {
+				// TODO: mirar la planta target para bajarse
+				// if currentFloor == person.targetFloor -> wait
+			}
+		} catch (Exception e) {
+			// se evacua a la persona
 		}
+		
 	}
 	
 	
@@ -203,9 +233,12 @@ public class Elevator extends Thread {
 	@Override
 	public void run() {
 		while (true) {
-			while (this.status != ElevatorStatus.OFF)
-				this.stopInFloor();
+			this.stopInFloor();
+			while (this.status != ElevatorStatus.OFF) {
 				this.moveToNextFloor();
+				this.stopInFloor();
+			}
+			evacuatePeople();
 		}
 	}
 	

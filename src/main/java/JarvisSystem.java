@@ -10,6 +10,7 @@ public class JarvisSystem {
     ElevatorBackUp elevatorBackUp = new ElevatorBackUp("elevatorBackUp", ElevatorStatus.OFF);
     private Map<Integer, Boolean> externalRequestedFloors;
     ElevatorBreaker elevatorBroker;
+    ArrayList<JarvisRemoteControl> remotes;
 
     public void initElevators() {
         Elevator elevator1 = new Elevator("elevator1", ElevatorStatus.MOVE);
@@ -94,5 +95,31 @@ public class JarvisSystem {
     public void setExternalRequestedFloors(Map<Integer, Boolean> externalRequestedFloors) {
         this.externalRequestedFloors = externalRequestedFloors;
     }
+
+	public void configureRemote(JarvisRemoteControl remote) {
+		remotes.add(remote);
+		
+	}
+
+	public void notifyFloorStop(int floor) {
+		for (JarvisRemoteControl remote: this.remotes) {
+			if (remote.value == floor) {
+				remote.notifyElevatorArriving();
+			}
+		}
+	}
+
+	public void notifyFloorMove(int floor) {
+		for (JarvisRemoteControl remote: this.remotes) {
+			if (remote.value == floor) {
+				remote.notifyElevatorLeaving();
+			}
+		}
+	}
+
+	public void notifyElevatorRepaired() {
+		this.elevatorBackUp.turnOff();
+		
+	}
 
 }

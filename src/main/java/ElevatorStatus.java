@@ -4,6 +4,7 @@ public enum ElevatorStatus {
     STOPPED,
     BROKEN,
     MOVE,
-    OFF
+    OFF,
+    EXITING
 
 }
