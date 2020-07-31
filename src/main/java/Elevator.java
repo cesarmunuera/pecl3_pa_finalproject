@@ -171,6 +171,7 @@ public class Elevator extends Thread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		this.initRequestedFloors();
 		this.status = ElevatorStatus.STOPPED;
 	}
 
