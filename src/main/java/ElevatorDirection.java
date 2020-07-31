@@ -1,9 +1,8 @@
 
-
 public enum ElevatorDirection {
-	
-	NONE,
-	UP,
-	DOWN
+
+    NONE,
+    UP,
+    DOWN
 
 }
