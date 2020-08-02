@@ -4,12 +4,18 @@ import java.util.logging.Logger;
 
 public class PeopleGenerator extends Thread {
 
-    int peopleCounter = 0;
-    String idPrefix = "P";
+    Hospital hospital;
+	int peopleCounter;
+    String ID_PREFIX = "P";
+    
+    public PeopleGenerator(Hospital hospital) {
+    	this.hospital = hospital;
+    	this.peopleCounter = 0;
+    }
 
     private String idGenerator() {
         peopleCounter++;
-        return idPrefix + peopleCounter;
+        return ID_PREFIX + peopleCounter;
     }
 
     private int randomFloor() {
@@ -17,7 +23,7 @@ public class PeopleGenerator extends Thread {
     }
 
     private void waitForPeopleGeneration() {
-        double randomTime = (Math.random() * (Configuration.MAX_GENERATE_USER_MS - Configuration.MIN_GENERATE_USER_MS +1) 
+        double randomTime = (Math.random() * (Configuration.MAX_GENERATE_USER_MS - Configuration.MIN_GENERATE_USER_MS + 1) 
                 + Configuration.MIN_GENERATE_USER_MS);
 
         try {
@@ -32,6 +38,8 @@ public class PeopleGenerator extends Thread {
     	String id;
     	int currentFloor;
     	int targetFloor;
+    	HospitalFloor floor;
+    	Person person;
     	
         while (true) {
             waitForPeopleGeneration();
@@ -42,7 +50,9 @@ public class PeopleGenerator extends Thread {
             	targetFloor = randomFloor();
             }
 
-            Person person = new Person(id, currentFloor, targetFloor);
+            floor = hospital.getFloor(currentFloor);
+            person = new Person(id, floor, targetFloor);
+            person.hospitalFloor = floor;
             // TODO: put person in random hospital floor
         }
 

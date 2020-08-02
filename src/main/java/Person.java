@@ -18,9 +18,10 @@ public class Person extends Thread {
 		}
 	}
 	
-    public Person(String identificator, int floor, int targetFloor) {
+    public Person(String identificator, HospitalFloor hospitalFloor, int targetFloor) {
         this.identificator = identificator;
-        this.floor = floor;
+        this.hospitalFloor = hospitalFloor;
+        this.floor = hospitalFloor.floor;
         this.targetFloor = targetFloor;
         chooseDirection();
     }
