@@ -50,7 +50,7 @@ public class Elevator extends Thread {
 
     public void evacuatePeople() {
         for (Person person : this.space) {
-        	person.floor = this.currentFloor;
+            person.floor = this.currentFloor;
             person.interrupt();
         }
     }
@@ -148,20 +148,20 @@ public class Elevator extends Thread {
             this.move();
         }
     }
-    
+
     public void waitInFloor() {
-    	this.status = ElevatorStatus.EXITING;
+        this.status = ElevatorStatus.EXITING;
         try {
-			sleep((long) 300);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+            sleep((long) 300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         this.status = ElevatorStatus.STOPPED;
         try {
-			sleep((long) 300);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+            sleep((long) 300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void stopInFloor() {
@@ -181,68 +181,62 @@ public class Elevator extends Thread {
     }
 
     public void repair() {
-        double randomTime = ((Configuration.MAX_REPAIR_SECONDS - Configuration.MIN_REPAIR_SECONDS)
-                + (Configuration.MIN_REPAIR_SECONDS * Math.random()));
-		try {
-			Thread.sleep((long) randomTime);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		this.initRequestedFloors();
-		this.status = ElevatorStatus.STOPPED;
-		this.jarvisSystem.notifyElevatorRepaired();
-	}
+        double randomTime = (Math.random() * (Configuration.MAX_REPAIR_SECONDS - Configuration.MIN_REPAIR_SECONDS +1) 
+                + Configuration.MIN_REPAIR_SECONDS);
 
-	public boolean enter(Person person) {
-		boolean inside = false;
-		inside = this.spaceSemaphore.tryAcquire();
-		if (inside) {
-			this.space.add(person);
-		}
-		
-		return inside;
-	}
-	
-	
-	public void requestFloor(int floor) {
-		this.requestedFloors.put(floor, true);
-	}
-	
-	
-	public void waitFloor(Person person) {
-		try {
-			while (true) {
-				// TODO: mirar la planta target para bajarse
-				// if currentFloor == person.targetFloor -> wait
-			}
-		} catch (Exception e) {
-			// se evacua a la persona
-		}
-		
-	}
-	
-	
-	public void out(Person person) {
-		// out of elevator
-		// pace.remove()
-		// spaceSemaphore.release()
-		
-	}
-	
-	
-	@Override
-	public void run() {
-		while (true) {
-			this.stopInFloor();
-			while (this.status != ElevatorStatus.OFF) {
-				this.moveToNextFloor();
-				this.stopInFloor();
-			}
-			evacuatePeople();
-		}
-	}
-	
-	
+        try {
+            Thread.sleep((long) randomTime);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        this.initRequestedFloors();
+        this.status = ElevatorStatus.STOPPED;
+        this.jarvisSystem.notifyElevatorRepaired();
+    }
 
+    public boolean enter(Person person) {
+        boolean inside = false;
+        inside = this.spaceSemaphore.tryAcquire();
+        if (inside) {
+            this.space.add(person);
+        }
+
+        return inside;
+    }
+
+    public void requestFloor(int floor) {
+        this.requestedFloors.put(floor, true);
+    }
+
+    public void waitFloor(Person person) {
+        try {
+            while (true) {
+                // TODO: mirar la planta target para bajarse
+                // if currentFloor == person.targetFloor -> wait
+            }
+        } catch (Exception e) {
+            // se evacua a la persona
+        }
+
+    }
+
+    public void out(Person person) {
+        // out of elevator
+        // pace.remove()
+        // spaceSemaphore.release()
+
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            this.stopInFloor();
+            while (this.status != ElevatorStatus.OFF) {
+                this.moveToNextFloor();
+                this.stopInFloor();
+            }
+            evacuatePeople();
+        }
+    }
 
 }

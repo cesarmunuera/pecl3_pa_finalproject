@@ -8,20 +8,20 @@ public class PeopleGenerator extends Thread {
     String idPrefix = "P";
 
     private String idGenerator() {
-    	peopleCounter++;
+        peopleCounter++;
         return idPrefix + peopleCounter;
     }
 
     private int randomFloor() {
-        return (int) (Math.random() * (Configuration.MAX_FLOOR));
+        return (int) (Math.random() * (Configuration.MAX_FLOOR +1));
     }
-    
-    private void waitForPeopleGeneration() {
-    	double randomTime = (Configuration.MIN_GENERATE_USER_MS
-                + ((Configuration.MAX_GENERATE_USER_MS - Configuration.MIN_GENERATE_USER_MS) * Math.random()));
 
-    	try {
-    		Thread.sleep((long) randomTime);
+    private void waitForPeopleGeneration() {
+        double randomTime = (Math.random() * (Configuration.MAX_GENERATE_USER_MS - Configuration.MIN_GENERATE_USER_MS +1) 
+                + Configuration.MIN_GENERATE_USER_MS);
+
+        try {
+            Thread.sleep((long) randomTime);
         } catch (InterruptedException ex) {
             Logger.getLogger(PeopleGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -31,7 +31,7 @@ public class PeopleGenerator extends Thread {
     public void run() {
         while (true) {
 
-        	waitForPeopleGeneration();
+            waitForPeopleGeneration();
             String id = idGenerator();
             int currentFloor = randomFloor();
             int targetFloor = randomFloor();

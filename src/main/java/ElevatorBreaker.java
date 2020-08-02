@@ -14,8 +14,9 @@ public class ElevatorBreaker extends Thread {
     }
 
     public void sleepRandomTime() {
-        double randomTime = ((Configuration.MAX_BROKE_SECONDS - Configuration.MIN_BROKE_SECONDS)
-                + (Configuration.MIN_BROKE_SECONDS * Math.random()));
+        double randomTime = (Math.random() * (Configuration.MAX_BROKE_SECONDS - Configuration.MIN_BROKE_SECONDS + 1)
+                + Configuration.MIN_BROKE_SECONDS);
+
         try {
             Thread.sleep((long) randomTime);
         } catch (InterruptedException e) {
