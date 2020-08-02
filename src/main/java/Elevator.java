@@ -209,13 +209,14 @@ public class Elevator extends Thread {
     }
 
     public void waitFloor(Person person) {
+    	boolean isInTargetFloor = false;
         try {
-            while (true) {
-                // TODO: mirar la planta target para bajarse
-                // if currentFloor == person.targetFloor -> wait
+            while (!isInTargetFloor) {
+            	isInTargetFloor = this.currentFloor == person.targetFloor;
             }
         } catch (Exception e) {
-            // se evacua a la persona
+            // se evacua a la persona 
+        	this.out(person);
         }
 
     }
