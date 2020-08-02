@@ -25,13 +25,12 @@ public class Person extends Thread {
         chooseDirection();
     }
     
-    
     @Override
 	public void run() {
     	Elevator elevator; 
-		while (true) {
-			this.hospitalFloor.callElevator(); // sleep until elevator arrives
-			elevator = this.hospitalFloor.getElevator();
+    	while (!(this.floor == this.targetFloor)) {
+    		this.hospitalFloor.callElevator(); // sleep until elevator arrives
+    		elevator = this.hospitalFloor.getElevator();
 			if (elevator != null) {
 				if (elevator.status != ElevatorStatus.BROKEN) {
 					if (elevator.direction == this.direction) {
@@ -42,14 +41,14 @@ public class Person extends Thread {
 						if (inside) {
 							elevator.waitFloor(this);
 							elevator.out(this);
-							// TODO: checkear si esta en la planta correcta y acabar o volver a ejecutar todo
+							if (!(this.floor == this.targetFloor)) {
+							}
 						}
 					}
 				}
 				
 			}
-			
-		}
+    	}
 	}
 
 }
