@@ -213,6 +213,7 @@ public class Elevator extends Thread {
         try {
             while (!isInTargetFloor) {
             	isInTargetFloor = this.currentFloor == person.targetFloor;
+            	person.floor = this.currentFloor;
             }
         } catch (Exception e) {
             // se evacua a la persona 
@@ -222,10 +223,8 @@ public class Elevator extends Thread {
     }
 
     public void out(Person person) {
-        // out of elevator
-        // pace.remove()
-        // spaceSemaphore.release()
-
+    	this.space.remove(person);
+    	this.spaceSemaphore.release();
     }
 
     @Override
