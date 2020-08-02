@@ -29,13 +29,18 @@ public class PeopleGenerator extends Thread {
 
     @Override
     public void run() {
+    	String id;
+    	int currentFloor;
+    	int targetFloor;
+    	
         while (true) {
-
             waitForPeopleGeneration();
-            String id = idGenerator();
-            int currentFloor = randomFloor();
-            int targetFloor = randomFloor();
-            // TODO: check currentFloor != targetFloor
+            id = idGenerator();
+            currentFloor = randomFloor();
+            targetFloor = randomFloor();
+            while (currentFloor == targetFloor) {
+            	targetFloor = randomFloor();
+            }
 
             Person person = new Person(id, currentFloor, targetFloor);
             // TODO: put person in random hospital floor
