@@ -10,7 +10,7 @@ public class Elevator extends Thread {
     int currentFloor;
     int previousFloor;
     Semaphore spaceSemaphore = new Semaphore(Configuration.MAX_PEOPLE, true);
-    JarvisSystem jarvisSystem = new JarvisSystem();
+    JarvisSystem jarvisSystem;
     ArrayList<Person> space = new ArrayList<Person>(Configuration.MAX_PEOPLE);
     Map<Integer, Boolean> requestedFloors;
     ElevatorStatus status;
@@ -23,8 +23,9 @@ public class Elevator extends Thread {
         }
     }
 
-    public Elevator(String id, ElevatorStatus status) {
+    public Elevator(String id, ElevatorStatus status, JarvisSystem jarvisSystem) {
         this.id = id;
+        this.jarvisSystem = jarvisSystem;
         this.currentFloor = Configuration.MIN_FLOOR;
         this.previousFloor = Configuration.MIN_FLOOR;
         this.status = status;
@@ -223,6 +224,7 @@ public class Elevator extends Thread {
     }
 
     public void out(Person person) {
+    	person.floor = this.currentFloor;
     	this.space.remove(person);
     	this.spaceSemaphore.release();
     }

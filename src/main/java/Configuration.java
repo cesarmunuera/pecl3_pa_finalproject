@@ -2,6 +2,7 @@
 public class Configuration {
 
     public static final int ELEVATOR_MOVES = 5000;
+    public static final int PEOPLE_GENERATED = 6;
     public static final int MIN_FLOOR = 0;
     public static final int MAX_FLOOR = 20;
     public static final int MAX_PEOPLE = 8;

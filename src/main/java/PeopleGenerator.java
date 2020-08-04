@@ -14,12 +14,12 @@ public class PeopleGenerator extends Thread {
     }
 
     private String idGenerator() {
-        peopleCounter++;
+        this.peopleCounter++;
         return ID_PREFIX + peopleCounter;
     }
 
     private int randomFloor() {
-        return (int) (Math.random() * (Configuration.MAX_FLOOR +1));
+        return (int) (Math.random() * (Configuration.MAX_FLOOR + 1));
     }
 
     private void waitForPeopleGeneration() {
@@ -32,28 +32,23 @@ public class PeopleGenerator extends Thread {
             Logger.getLogger(PeopleGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public Person generate() {
+    	String id = idGenerator();
+        int currentFloor = randomFloor();
+        int targetFloor = randomFloor();
+        while (currentFloor == targetFloor) {
+        	targetFloor = randomFloor();
+        }
+        return new Person(id, hospital.getFloor(currentFloor), targetFloor);
+    }
 
     @Override
     public void run() {
-    	String id;
-    	int currentFloor;
-    	int targetFloor;
-    	HospitalFloor floor;
-    	Person person;
-    	
-        while (true) {
+        while (this.peopleCounter < Configuration.PEOPLE_GENERATED) {
+        	System.out.println("generating person");
             waitForPeopleGeneration();
-            id = idGenerator();
-            currentFloor = randomFloor();
-            targetFloor = randomFloor();
-            while (currentFloor == targetFloor) {
-            	targetFloor = randomFloor();
-            }
-
-            floor = hospital.getFloor(currentFloor);
-            person = new Person(id, floor, targetFloor);
-            person.hospitalFloor = floor;
-            // TODO: put person in random hospital floor
+            generate().start();
         }
 
     }

@@ -5,7 +5,6 @@ import java.util.concurrent.locks.ReentrantLock;
 public class JarvisRemoteControl {
 	
 	JarvisSystem jarvisSystem;
-	HospitalFloor floor;
 	int value;
 	boolean active = false; // condition
 	boolean elevatorInFloor = false;
@@ -60,6 +59,10 @@ public class JarvisRemoteControl {
 		this.elevatorInFloor = false;
 		this.active = false;
 		
+	}
+
+	public Elevator getElevatorInFloor(int floor) {
+		return this.jarvisSystem.getElevatorInFloor(floor);
 	}
 
 }

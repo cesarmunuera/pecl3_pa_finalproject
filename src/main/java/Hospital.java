@@ -3,11 +3,12 @@ import java.util.ArrayList;
 public class Hospital {
 	
 	ArrayList<HospitalFloor> floors = new ArrayList<>();
+	JarvisSystem jarvisSystem = new JarvisSystem();
 	
 	public Hospital() {
 		//TODO: check if floor 20 or until 19
-		for (int i=Configuration.MIN_FLOOR; i<Configuration.MAX_FLOOR; i++) { 
-			floors.add(new HospitalFloor(i));
+		for (int nFloor=Configuration.MIN_FLOOR; nFloor<=Configuration.MAX_FLOOR; nFloor++) { 
+			floors.add(new HospitalFloor(nFloor, new JarvisRemoteControl(this.jarvisSystem, nFloor)));
 		}
 	}
 

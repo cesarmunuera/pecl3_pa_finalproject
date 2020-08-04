@@ -2,7 +2,8 @@
 public class ElevatorStub {
 
     public static void main(String[] args) {
-        Elevator elevator = new Elevator("elevator", ElevatorStatus.STOPPED);
+    	JarvisSystem jarvis = new JarvisSystem(); 
+        Elevator elevator = new Elevator("elevator", ElevatorStatus.STOPPED, jarvis);
 
         elevator.start();
         try {

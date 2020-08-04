@@ -7,17 +7,18 @@ import java.util.concurrent.ConcurrentHashMap;
 public class JarvisSystem {
 
     ArrayList<Elevator> elevators;
-    ElevatorBackUp elevatorBackUp = new ElevatorBackUp("elevatorBackUp", ElevatorStatus.OFF);
+    ElevatorBackUp elevatorBackUp;
     private Map<Integer, Boolean> externalRequestedFloors;
     ElevatorBreaker elevatorBroker;
     ArrayList<JarvisRemoteControl> remotes;
 
     public void initElevators() {
-        Elevator elevator1 = new Elevator("elevator1", ElevatorStatus.MOVE);
-        Elevator elevator2 = new Elevator("elevator2", ElevatorStatus.MOVE);
-        //Elevator elevator3 = new Elevator("elevator3", ElevatorStatus.MOVE);
-        elevators.add(elevator1);
-        elevators.add(elevator2);
+    	this.elevators = new ArrayList<>(2);
+        Elevator elevator1 = new Elevator("elevator1", ElevatorStatus.MOVE, this);
+        Elevator elevator2 = new Elevator("elevator2", ElevatorStatus.MOVE, this);
+        this.elevatorBackUp = new ElevatorBackUp("elevatorBackUp", ElevatorStatus.OFF, this);
+        this.elevators.add(elevator1);
+        this.elevators.add(elevator2);
         //elevators.add(elevator3);
     }
 
