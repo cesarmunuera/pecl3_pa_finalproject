@@ -6,7 +6,6 @@ public class Hospital {
 	JarvisSystem jarvisSystem = new JarvisSystem();
 	
 	public Hospital() {
-		//TODO: check if floor 20 or until 19
 		for (int nFloor=Configuration.MIN_FLOOR; nFloor<=Configuration.MAX_FLOOR; nFloor++) { 
 			floors.add(new HospitalFloor(nFloor, new JarvisRemoteControl(this.jarvisSystem, nFloor)));
 		}

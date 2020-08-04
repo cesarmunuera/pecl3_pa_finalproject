@@ -24,12 +24,14 @@ public class Person extends Thread {
         this.floor = hospitalFloor.floor;
         this.targetFloor = targetFloor;
         chooseDirection();
+        System.out.println("Person " + this.identificator + " (" + this.floor + " -> " + this.targetFloor + ") " + " initialized!");
     }
     
     @Override
 	public void run() {
     	Elevator elevator; 
     	while (!(this.floor == this.targetFloor)) {
+    		System.out.println("Person " + this.identificator + ": called elevator and wait");
     		this.hospitalFloor.callElevator(); // sleep until elevator arrives
     		elevator = this.hospitalFloor.getElevator();
 			if (elevator != null) {
@@ -40,14 +42,23 @@ public class Person extends Thread {
 						}
 						boolean inside = elevator.enter(this);
 						if (inside) {
+							System.out.println("Person " + this.identificator + ": enter to elevator");
 							elevator.waitFloor(this);
 							elevator.out(this);
-							if (!(this.floor == this.targetFloor)) {
-							}
+							System.out.println("Person " + this.identificator + ": go out from floor");
+							if (this.floor == this.targetFloor) {
+								System.out.println("Person " + this.identificator + ": is in target floor");
+							} 
+						} else {
+							System.out.println("Person " + this.identificator + ": elevator full, wait next one");
 						}
 					}
+				} else {
+					System.out.println("Person " + this.identificator + ": elevator broken, wait next one");
 				}
 				
+			} else {
+				System.out.println("Person " + this.identificator + ": not possible to get elevator");
 			}
     	}
 	}
