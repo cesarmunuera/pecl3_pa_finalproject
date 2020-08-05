@@ -1,5 +1,9 @@
+import java.util.logging.Logger;
 
 public class Person extends Thread {
+	
+	private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
+	public static final String PREFIX = "P";
 
     HospitalFloor hospitalFloor;
     private String identificator;
@@ -24,14 +28,20 @@ public class Person extends Thread {
         this.floor = hospitalFloor.floor;
         this.targetFloor = targetFloor;
         chooseDirection();
-        System.out.println("Person " + this.identificator + " (" + this.floor + " -> " + this.targetFloor + ") " + " initialized!");
+        logger.info(this.toString() + " initialized");
+    }
+    
+    @Override
+    public String toString() {
+		return "Person(" + this.identificator + ", " + this.floor + " -> " + this.targetFloor + ", " + this.direction.name() + ")";
+    	
     }
     
     @Override
 	public void run() {
     	Elevator elevator; 
     	while (!(this.floor == this.targetFloor)) {
-    		System.out.println("Person " + this.identificator + ": called elevator and wait");
+    		logger.info(this.toString() + " called elevator and start waiting");
     		this.hospitalFloor.callElevator(); // sleep until elevator arrives
     		elevator = this.hospitalFloor.getElevator();
 			if (elevator != null) {
@@ -43,24 +53,28 @@ public class Person extends Thread {
 						boolean inside = elevator.enter(this);
 						if (inside) {
 							System.out.println("Person " + this.identificator + ": enter to elevator");
+							logger.info(this.toString() + " enter to elevator");
 							elevator.waitFloor(this);
 							elevator.out(this);
-							System.out.println("Person " + this.identificator + ": go out from floor");
+							logger.info(this.toString() + " go out to floor " +this.floor);
 							if (this.floor == this.targetFloor) {
-								System.out.println("Person " + this.identificator + ": is in target floor");
-							} 
+								logger.info(this.toString() + " is in target floor!");
+							} else {
+								logger.info(this.toString() + " is not in target floor yet");
+							}
 						} else {
-							System.out.println("Person " + this.identificator + ": elevator full, wait next one");
+							logger.info(this.toString() + " elevator full, wait next one");
 						}
 					}
 				} else {
-					System.out.println("Person " + this.identificator + ": elevator broken, wait next one");
+					logger.info(this.toString() + " elevator broken, wait next one");
 				}
 				
 			} else {
-				System.out.println("Person " + this.identificator + ": not possible to get elevator");
+				logger.warning(this.toString() + " not possible to get elevator");
 			}
     	}
+    	logger.info(this.toString() + " ends");
 	}
 
 }

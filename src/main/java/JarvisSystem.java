@@ -3,8 +3,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 public class JarvisSystem {
+	
+	private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 
     ArrayList<Elevator> elevators;
     ElevatorBackUp elevatorBackUp;
@@ -13,28 +16,35 @@ public class JarvisSystem {
     ArrayList<JarvisRemoteControl> remotes;
 
     public void initElevators() {
-    	this.elevators = new ArrayList<>(2);
-        Elevator elevator1 = new Elevator("elevator1", ElevatorStatus.MOVE, this);
-        Elevator elevator2 = new Elevator("elevator2", ElevatorStatus.MOVE, this);
-        this.elevatorBackUp = new ElevatorBackUp("elevatorBackUp", ElevatorStatus.OFF, this);
-        this.elevators.add(elevator1);
-        this.elevators.add(elevator2);
-        //elevators.add(elevator3);
+    	this.elevators = new ArrayList<>(Configuration.N_ELEVATORS);
+    	
+    	Elevator elevator;
+    	for (int i=0; i<Configuration.N_ELEVATORS; i++) {
+    		elevator = new Elevator("elevator_" + i, ElevatorStatus.MOVE, this);
+    		this.elevators.add(elevator);
+    		elevator.start();
+    	}
+        this.elevatorBackUp = new ElevatorBackUp("elevator_bkp", ElevatorStatus.OFF, this);
+        logger.info("elevators initialized");
     }
 
     public void initRequestedFloors() {
-        this.setExternalRequestedFloors(new ConcurrentHashMap<>());
+        this.externalRequestedFloors = new ConcurrentHashMap<>();
         for (int i = Configuration.MIN_FLOOR; i <= Configuration.MAX_FLOOR; i++) {
             this.getExternalRequestedFloors().put(i, false);
         }
     }
 
     public JarvisSystem() {
-        this.initElevators();
-        this.initRequestedFloors();
+    	logger.info("initializing jarvis");
+    	this.initRequestedFloors();
+    	this.initElevators();
+        this.remotes = new ArrayList<>(Configuration.MAX_FLOOR + 1);
+        logger.info("jarvis initialized!");
     }
 
     public void callElevator(int floor) {
+    	logger.info("called elevator from floor " + floor);
         this.getExternalRequestedFloors().put(floor, true);
 
     }
@@ -99,6 +109,7 @@ public class JarvisSystem {
 
 	public void configureRemote(JarvisRemoteControl remote) {
 		remotes.add(remote);
+		logger.info("added new remote controller " + remote.toString());
 		
 	}
 
@@ -116,6 +127,8 @@ public class JarvisSystem {
 				remote.notifyElevatorLeaving();
 			}
 		}
+		
+		// TODO: print system status
 	}
 
 	public void notifyElevatorRepaired() {

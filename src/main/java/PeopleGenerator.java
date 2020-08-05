@@ -3,10 +3,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PeopleGenerator extends Thread {
+	
+	private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 
     Hospital hospital;
 	int peopleCounter;
-    String ID_PREFIX = "P";
     
     public PeopleGenerator(Hospital hospital) {
     	this.hospital = hospital;
@@ -15,7 +16,7 @@ public class PeopleGenerator extends Thread {
 
     private String idGenerator() {
         this.peopleCounter++;
-        return ID_PREFIX + peopleCounter;
+        return Person.PREFIX + peopleCounter;
     }
 
     private int randomFloor() {
@@ -29,27 +30,32 @@ public class PeopleGenerator extends Thread {
         try {
             Thread.sleep((long) randomTime);
         } catch (InterruptedException ex) {
-            Logger.getLogger(PeopleGenerator.class.getName()).log(Level.SEVERE, null, ex);
+        	logger.warning("error while waiting next generation: " + ex.getMessage());
         }
     }
     
     public Person generate() {
+    	
     	String id = idGenerator();
         int currentFloor = randomFloor();
         int targetFloor = randomFloor();
         while (currentFloor == targetFloor) {
         	targetFloor = randomFloor();
         }
-        return new Person(id, hospital.getFloor(currentFloor), targetFloor);
+		Person person = new Person(id, hospital.getFloor(currentFloor), targetFloor);
+        logger.info("generated person " + this.peopleCounter + "/" + Configuration.PEOPLE_GENERATED);
+        return person;
     }
 
     @Override
     public void run() {
+    	logger.info("starts generating people");
         while (this.peopleCounter < Configuration.PEOPLE_GENERATED) {
-        	System.out.println("generating person");
             waitForPeopleGeneration();
             generate().start();
+            
         }
+        logger.info("ends generating people");
 
     }
 }
