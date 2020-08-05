@@ -25,3 +25,6 @@ hs_err_pid*
 /FinalProject/nbproject/private/
 /build/
 /dist/
+
+# log files
+*.log
