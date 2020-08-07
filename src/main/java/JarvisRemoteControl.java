@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -9,13 +10,17 @@ public class JarvisRemoteControl {
 	
 	JarvisSystem jarvisSystem;
 	int value;
-	boolean active = false; // condition
-	boolean elevatorInFloor = false;
-	final Lock lock = new ReentrantLock();
-	final Condition elevatorInFloorCondition = lock.newCondition(); 
+	boolean active; // condition
+	boolean elevatorInFloor;
+	final Lock lock;
+	final Condition elevatorInFloorCondition; 
 	
 	public JarvisRemoteControl(JarvisSystem jarvisSystem, int value) {
 		this.jarvisSystem = jarvisSystem;
+		this.active = false;
+		this.elevatorInFloor = false;
+		this.lock = new ReentrantLock();
+		this.elevatorInFloorCondition = lock.newCondition();
 		this.value = value;
 		this.jarvisSystem.configureRemote(this);
 		logger.info(this.toString() + " initialized and configured");
@@ -57,7 +62,7 @@ public class JarvisRemoteControl {
 		try {
 			lock.lock();
 			this.elevatorInFloor = true;
-			elevatorInFloorCondition.notifyAll();
+			elevatorInFloorCondition.signal();
 			}
 		finally {
 			lock.unlock();
@@ -70,8 +75,8 @@ public class JarvisRemoteControl {
 		
 	}
 
-	public Elevator getElevatorInFloor(int floor) {
-		return this.jarvisSystem.getElevatorInFloor(floor);
+	public ArrayList<Elevator> getElevatorsInFloor(int floor) {
+		return this.jarvisSystem.getElevatorsInFloor(floor);
 	}
 
 }

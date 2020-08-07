@@ -16,10 +16,10 @@ public class JarvisSystem {
     ArrayList<JarvisRemoteControl> remotes;
 
     public void initElevators() {
-    	this.elevators = new ArrayList<>(Configuration.N_ELEVATORS);
+    	this.elevators = new ArrayList<>(Configuration.JARVIS_N_ELEVATORS);
     	
     	Elevator elevator;
-    	for (int i=0; i<Configuration.N_ELEVATORS; i++) {
+    	for (int i=0; i<Configuration.JARVIS_N_ELEVATORS; i++) {
     		elevator = new Elevator("elevator_" + i, ElevatorStatus.MOVE, this);
     		this.elevators.add(elevator);
     		elevator.start();
@@ -30,7 +30,7 @@ public class JarvisSystem {
 
     public void initRequestedFloors() {
         this.externalRequestedFloors = new ConcurrentHashMap<>();
-        for (int i = Configuration.MIN_FLOOR; i <= Configuration.MAX_FLOOR; i++) {
+        for (int i = Configuration.HOSPITAL_FLOOR_MIN; i <= Configuration.HOSPITAL_FLOOR_MAX; i++) {
             this.getExternalRequestedFloors().put(i, false);
         }
     }
@@ -39,7 +39,7 @@ public class JarvisSystem {
     	logger.info("initializing jarvis");
     	this.initRequestedFloors();
     	this.initElevators();
-        this.remotes = new ArrayList<>(Configuration.MAX_FLOOR + 1);
+        this.remotes = new ArrayList<>(Configuration.HOSPITAL_FLOOR_MAX + 1);
         logger.info("jarvis initialized!");
     }
 
@@ -50,7 +50,7 @@ public class JarvisSystem {
     }
 
     public void restoreRequestedFloors(Map<Integer, Boolean> requestedFloors) {
-        for (int i = Configuration.MIN_FLOOR; i <= Configuration.MAX_FLOOR; i++) {
+        for (int i = Configuration.HOSPITAL_FLOOR_MIN; i <= Configuration.HOSPITAL_FLOOR_MAX; i++) {
             boolean restoreRequested = requestedFloors.get(i);
             if (restoreRequested) {
                 getExternalRequestedFloors().put(i, restoreRequested);
@@ -58,19 +58,21 @@ public class JarvisSystem {
         }
     }
 
-    public Elevator getElevatorInFloor(int floor) {
-        Elevator elevatorInFloor = null;
+    public ArrayList<Elevator> getElevatorsInFloor(int floor) {
+        ArrayList<Elevator> elevatorsInFloor = new ArrayList<>();
         for (Elevator elevator : this.elevators) {
-            if (elevator.currentFloor == floor && elevator.status == ElevatorStatus.STOPPED) {
-
+            if (elevator.currentFloor == floor && elevator.status != ElevatorStatus.BROKEN) {
+            	elevatorsInFloor.add(elevator);
             }
         }
-        return elevatorInFloor;
+        
+        // TODO: Check ElevatorBackUp
+        return elevatorsInFloor;
     }
 
     public synchronized HashMap<Integer, Boolean> getExternalRequestedFloors(int currentFloor, ElevatorDirection direction) {
         HashMap<Integer, Boolean> requestedFloors = new HashMap<Integer, Boolean>();
-        for (int i = Configuration.MIN_FLOOR; i <= Configuration.MAX_FLOOR; i++) {
+        for (int i = Configuration.HOSPITAL_FLOOR_MIN; i <= Configuration.HOSPITAL_FLOOR_MAX; i++) {
             requestedFloors.put(i, false);
         }
         int step;
@@ -79,14 +81,14 @@ public class JarvisSystem {
 
         if (direction == ElevatorDirection.UP) {
             step = 1;
-            stop = Configuration.MAX_FLOOR;
+            stop = Configuration.HOSPITAL_FLOOR_MAX;
         } else if (direction == ElevatorDirection.DOWN) {
             step = -1;
-            stop = Configuration.MIN_FLOOR;
+            stop = Configuration.HOSPITAL_FLOOR_MIN;
         } else {
             // go up by default if no direction provided
             step = 1;
-            stop = Configuration.MAX_FLOOR;
+            stop = Configuration.HOSPITAL_FLOOR_MAX;
         }
 
         while (i != stop) {

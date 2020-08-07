@@ -1,19 +1,18 @@
 
 public class Configuration {
 
-    public static final int ELEVATOR_MOVES = 5000;
-    public static final int N_ELEVATORS = 2;
-    public static final int PEOPLE_GENERATED = 6;
-    public static final int MIN_FLOOR = 0;
-    public static final int MAX_FLOOR = 20;
-    public static final int MAX_PEOPLE = 8;
-    public static final int NONE_FLOOR_CODE = -9876;
-    public static final int MIN_GENERATE_USER_MS = 2000;
-    public static final int MAX_GENERATE_USER_MS = 500;
-    public static final int MIN_BROKE_SECONDS = 20;
-    public static final int MAX_BROKE_SECONDS = 30;
-    public static final int MIN_REPAIR_SECONDS = 10;
-    public static final int MAX_REPAIR_SECONDS = 15;
-    public static final double MOVE_SECONDS = 0.5;
+    public static final int JARVIS_N_ELEVATORS = 2;
+    public static final int HOSPITAL_FLOOR_MIN = 0;
+    public static final int HOSPITAL_FLOOR_MAX = 20;
+    public static final int GENERATED_MAX_PEOPLE = 2;
+    public static final int GENERATE_USER_MIN_MS = 500;
+    public static final int GENERATE_USER_MAX_MS = 2000;
+    public static final int ELEVATOR_MAX_MOVES = 5000;
+    public static final int ELEVATOR_MAX_PEOPLE = 8;
+    public static final int ELEVATOR_BROKE_MIN_MS = 20000;
+    public static final int ELEVATOR_BROKE_MAX_MS = 30000;
+    public static final int ELEVATOR_REPAIR_MIN_MS = 10000;
+    public static final int ELEVATOR_REPAIR_MAX_MS = 15000;
+    public static final int ELEVATOR_MOVE_MS = 500;
 
 }

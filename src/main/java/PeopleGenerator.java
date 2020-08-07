@@ -20,12 +20,12 @@ public class PeopleGenerator extends Thread {
     }
 
     private int randomFloor() {
-        return (int) (Math.random() * (Configuration.MAX_FLOOR + 1));
+        return (int) (Math.random() * (Configuration.HOSPITAL_FLOOR_MAX + 1));
     }
 
     private void waitForPeopleGeneration() {
-        double randomTime = (Math.random() * (Configuration.MAX_GENERATE_USER_MS - Configuration.MIN_GENERATE_USER_MS + 1) 
-                + Configuration.MIN_GENERATE_USER_MS);
+        double randomTime = (Math.random() * (Configuration.GENERATE_USER_MAX_MS - Configuration.GENERATE_USER_MIN_MS + 1) 
+                + Configuration.GENERATE_USER_MIN_MS);
 
         try {
             Thread.sleep((long) randomTime);
@@ -42,15 +42,16 @@ public class PeopleGenerator extends Thread {
         while (currentFloor == targetFloor) {
         	targetFloor = randomFloor();
         }
+
 		Person person = new Person(id, hospital.getFloor(currentFloor), targetFloor);
-        logger.info("generated person " + this.peopleCounter + "/" + Configuration.PEOPLE_GENERATED);
+        logger.info("generated person " + this.peopleCounter + "/" + Configuration.GENERATED_MAX_PEOPLE);
         return person;
     }
 
     @Override
     public void run() {
     	logger.info("starts generating people");
-        while (this.peopleCounter < Configuration.PEOPLE_GENERATED) {
+        while (this.peopleCounter < Configuration.GENERATED_MAX_PEOPLE) {
             waitForPeopleGeneration();
             generate().start();
             

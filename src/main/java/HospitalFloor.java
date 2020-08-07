@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 public class HospitalFloor {
@@ -24,8 +25,8 @@ public class HospitalFloor {
         this.jarvisRemoteControl.callElevator();
     }
 
-    public Elevator getElevator() {
-        return this.jarvisRemoteControl.getElevatorInFloor(this.floor);
+    public ArrayList<Elevator> getElevators() {
+        return this.jarvisRemoteControl.getElevatorsInFloor(this.floor);
     }
 
 }

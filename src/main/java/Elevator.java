@@ -12,9 +12,9 @@ public class Elevator extends Thread {
     String id;
     int currentFloor;
     int previousFloor;
-    Semaphore spaceSemaphore = new Semaphore(Configuration.MAX_PEOPLE, true);
+    Semaphore spaceSemaphore = new Semaphore(Configuration.ELEVATOR_MAX_PEOPLE, true);
     JarvisSystem jarvisSystem;
-    ArrayList<Person> space = new ArrayList<Person>(Configuration.MAX_PEOPLE);
+    ArrayList<Person> space = new ArrayList<Person>(Configuration.ELEVATOR_MAX_PEOPLE);
     Map<Integer, Boolean> requestedFloors;
     ElevatorStatus status;
     ElevatorDirection direction;
@@ -32,7 +32,7 @@ public class Elevator extends Thread {
 
     public void initRequestedFloors() {
         this.requestedFloors = new HashMap<>();
-        for (int i = Configuration.MIN_FLOOR; i <= Configuration.MAX_FLOOR; i++) {
+        for (int i = Configuration.HOSPITAL_FLOOR_MIN; i <= Configuration.HOSPITAL_FLOOR_MAX; i++) {
             this.requestedFloors.put(i, false);
         }
         logger.info("requested floors initialized");
@@ -41,8 +41,8 @@ public class Elevator extends Thread {
     public Elevator(String id, ElevatorStatus status, JarvisSystem jarvisSystem) {
         this.id = id;
         this.jarvisSystem = jarvisSystem;
-        this.currentFloor = Configuration.MIN_FLOOR;
-        this.previousFloor = Configuration.MIN_FLOOR;
+        this.currentFloor = Configuration.HOSPITAL_FLOOR_MIN;
+        this.previousFloor = Configuration.HOSPITAL_FLOOR_MIN;
         this.status = status;
         this.direction = ElevatorDirection.NONE;
         this.initRequestedFloors();
@@ -77,8 +77,10 @@ public class Elevator extends Thread {
     }
 
     public void move() {
+    	this.status = ElevatorStatus.MOVE;
+    	logger.info(this.toString() + " continue moving ");
         try {
-            Thread.sleep((long) Configuration.MOVE_SECONDS);
+            Thread.sleep((long) Configuration.ELEVATOR_MOVE_MS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -111,8 +113,8 @@ public class Elevator extends Thread {
 
     public boolean remainingRequestedUpperFloors() {
     	boolean remaining = false;
-    	if (this.currentFloor < Configuration.MAX_FLOOR) {
-    		remaining = this.checkRemainingRequestedFloors(this.currentFloor + 1, Configuration.MAX_FLOOR, this.requestedFloors);
+    	if (this.currentFloor < Configuration.HOSPITAL_FLOOR_MAX) {
+    		remaining = this.checkRemainingRequestedFloors(this.currentFloor + 1, Configuration.HOSPITAL_FLOOR_MAX, this.requestedFloors);
     	}
     	return remaining;
          
@@ -120,40 +122,39 @@ public class Elevator extends Thread {
 
     public boolean remainingExternalRequestedUpperFloors() {
     	boolean remaining = false;
-    	if (this.currentFloor < Configuration.MAX_FLOOR) {
-    		remaining = this.checkRemainingRequestedFloors(this.currentFloor + 1, Configuration.MAX_FLOOR, this.jarvisSystem.getExternalRequestedFloors());
+    	if (this.currentFloor < Configuration.HOSPITAL_FLOOR_MAX) {
+    		remaining = this.checkRemainingRequestedFloors(this.currentFloor + 1, Configuration.HOSPITAL_FLOOR_MAX, this.jarvisSystem.getExternalRequestedFloors());
     	}
     	return remaining;
     }
 
     public boolean remainingRequestedLowerFloors() {
     	boolean remaining = false;
-    	if (this.currentFloor > Configuration.MIN_FLOOR) {
-    		remaining = this.checkRemainingRequestedFloors(this.currentFloor - 1, Configuration.MIN_FLOOR, this.requestedFloors);
+    	if (this.currentFloor > Configuration.HOSPITAL_FLOOR_MIN) {
+    		remaining = this.checkRemainingRequestedFloors(this.currentFloor - 1, Configuration.HOSPITAL_FLOOR_MIN, this.requestedFloors);
     	}
     	return remaining;
     }
 
     public boolean remaininExternalRequestedLowerFloors() {
     	boolean remaining = false;
-    	if (this.currentFloor > Configuration.MIN_FLOOR) {
-    		remaining = this.checkRemainingRequestedFloors(this.currentFloor - 1, Configuration.MIN_FLOOR, this.jarvisSystem.getExternalRequestedFloors());
+    	if (this.currentFloor > Configuration.HOSPITAL_FLOOR_MIN) {
+    		remaining = this.checkRemainingRequestedFloors(this.currentFloor - 1, Configuration.HOSPITAL_FLOOR_MIN, this.jarvisSystem.getExternalRequestedFloors());
 	    }
 		return remaining;
     }
 
     public void moveToNextFloor() {
-    	logger.info(this.toString() + " continue moving ");
         boolean internalUpperRequestedFloors = this.remainingRequestedUpperFloors();
         boolean externalUpperRequestedFloors = this.remainingExternalRequestedUpperFloors();
         boolean internalLowerRequestedFloors = this.remainingRequestedLowerFloors();
         boolean externalLowerRequestedFloors = this.remaininExternalRequestedLowerFloors();
         boolean move = false;
 
-        if (this.currentFloor == Configuration.MIN_FLOOR) {
+        if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MIN) {
             this.direction = ElevatorDirection.UP;
 
-        } else if (this.currentFloor == Configuration.MAX_FLOOR) {
+        } else if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MAX) {
             this.direction = ElevatorDirection.DOWN;
 
         }
@@ -223,8 +224,8 @@ public class Elevator extends Thread {
 
     public void repair() {
     	logger.info(this.toString() + " starts repairing");
-        double randomTime = (Math.random() * (Configuration.MAX_REPAIR_SECONDS - Configuration.MIN_REPAIR_SECONDS +1) 
-                + Configuration.MIN_REPAIR_SECONDS);
+        double randomTime = (Math.random() * (Configuration.ELEVATOR_REPAIR_MAX_MS - Configuration.ELEVATOR_REPAIR_MIN_MS +1) 
+                + Configuration.ELEVATOR_REPAIR_MIN_MS);
 
         try {
             Thread.sleep((long) randomTime);
@@ -244,6 +245,7 @@ public class Elevator extends Thread {
         if (inside) {
             this.space.add(person);
             logger.info(this.toString() + " inside - " + person.toString());
+            this.requestFloor(person.targetFloor);
         }
 
         return inside;
@@ -258,6 +260,7 @@ public class Elevator extends Thread {
     	boolean isInTargetFloor = false;
         try {
             while (!isInTargetFloor) {
+            	Thread.sleep(5);
             	isInTargetFloor = this.currentFloor == person.targetFloor;
             	person.floor = this.currentFloor;
             }

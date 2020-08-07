@@ -13,7 +13,7 @@ public class Hospital {
 		JarvisRemoteControl remote;
 		HospitalFloor floor;
 		
-		for (int nFloor=Configuration.MIN_FLOOR; nFloor<=Configuration.MAX_FLOOR; nFloor++) { 
+		for (int nFloor=Configuration.HOSPITAL_FLOOR_MIN; nFloor<=Configuration.HOSPITAL_FLOOR_MAX; nFloor++) { 
 			remote = new JarvisRemoteControl(this.jarvisSystem, nFloor);
 			floor = new HospitalFloor(nFloor, remote);
 			floors.add(floor);
