@@ -14,6 +14,7 @@ public class JarvisSystem {
     private Map<Integer, Boolean> externalRequestedFloors;
     ElevatorBreaker elevatorBroker;
     ArrayList<JarvisRemoteControl> remotes;
+    private int elevatorsMovements = 0;
 
     public void initElevators() {
     	this.elevators = new ArrayList<>(Configuration.JARVIS_N_ELEVATORS);
