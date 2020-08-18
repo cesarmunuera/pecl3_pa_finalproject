@@ -81,7 +81,11 @@ public class JarvisSystem {
                 	for (Person person: elevator.space) {
                 		peopleInElevator.add(person.toString());
                 	}
-                	String elevatorString = elevator.status.name() + "#" + elevator.direction.name() + "#" + elevator.peopleInElevator();
+                	String elevatorDirection = elevator.direction.name();
+                	if (elevator.status == ElevatorStatus.BROKEN) {
+                		elevatorDirection = "KO";
+                	}
+                	String elevatorString = elevatorDirection + "#" + elevator.peopleInElevator();
                 	if (elevator.id.equals("elevator_0")) {
                 		elevator1 = elevatorString;
                 		destinationElevator1 = peopleInElevator.toString();
@@ -122,7 +126,7 @@ public class JarvisSystem {
         while(true) {
             int existingValue = getMovesCounter();
             int newValue = existingValue + 1;
-            if(movesCounter.compareAndSet(existingValue, newValue)) {
+            if (movesCounter.compareAndSet(existingValue, newValue)) {
             	if (getMovesCounter() == Configuration.ELEVATOR_MAX_PEOPLE) {
             		this.turnSytemOff();
             	}
