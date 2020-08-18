@@ -30,7 +30,7 @@ public class PeopleGenerator extends Thread {
         try {
             Thread.sleep((long) randomTime);
         } catch (InterruptedException ex) {
-        	logger.warning("error while waiting next generation: " + ex.getMessage());
+        	//logger.warning("error while waiting next generation: " + ex.getMessage());
         }
     }
     
@@ -44,19 +44,19 @@ public class PeopleGenerator extends Thread {
         }
 
 		Person person = new Person(id, hospital.getFloor(currentFloor), targetFloor);
-        logger.info("generated person " + this.peopleCounter + "/" + Configuration.GENERATED_MAX_PEOPLE);
+        //logger.info("generated person " + this.peopleCounter + "/" + Configuration.GENERATED_MAX_PEOPLE);
         return person;
     }
 
     @Override
     public void run() {
-    	logger.info("starts generating people");
+    	//logger.info("starts generating people");
         while (this.peopleCounter < Configuration.GENERATED_MAX_PEOPLE) {
             waitForPeopleGeneration();
             generate().start();
             
         }
-        logger.info("ends generating people");
+        //logger.info("ends generating people");
 
     }
 }

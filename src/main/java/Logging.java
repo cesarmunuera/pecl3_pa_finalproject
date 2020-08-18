@@ -25,8 +25,9 @@ public class Logging {
 		Handler fileHandler = new FileHandler(LOG_FILE, false);
 		SimpleFormatter simpleFormatter = new SimpleFormatter();
 		fileHandler.setFormatter(simpleFormatter);
+		fileHandler.setLevel(Level.WARNING);
 		logger.addHandler(fileHandler);
-        fileHandler.setLevel(Level.INFO);
+        
 	}
 
 }
