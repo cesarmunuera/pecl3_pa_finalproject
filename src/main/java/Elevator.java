@@ -71,6 +71,7 @@ public class Elevator extends Thread {
     public void broke() {
         this.status = ElevatorStatus.BROKEN;
         this.direction = ElevatorDirection.NONE;
+        this.jarvisSystem.notifyBreak();
         //logger.info(this.toString() + " broke up");
     }
 

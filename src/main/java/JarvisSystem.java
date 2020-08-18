@@ -17,7 +17,7 @@ public class JarvisSystem {
     ArrayList<Elevator> elevators;
     ElevatorBackUp elevatorBackUp;
     private Map<Integer, Boolean> externalRequestedFloors;
-    ElevatorBreaker elevatorBroker;
+    ElevatorBreaker elevatorBreaker;
     ArrayList<JarvisRemoteControl> remotes;
     private final AtomicInteger movesCounter = new AtomicInteger(0);
 
@@ -31,6 +31,9 @@ public class JarvisSystem {
     		elevator.start();
     	}
         this.elevatorBackUp = new ElevatorBackUp("elevator_bkp", ElevatorStatus.OFF, this);
+        this.elevatorBackUp.start();
+        this.elevatorBreaker = new ElevatorBreaker(this.elevators, this.elevatorBackUp);
+        this.elevatorBreaker.start();
         //logger.info("elevators initialized");
     }
 
@@ -92,12 +95,17 @@ public class JarvisSystem {
                 	} else if (elevator.id.equals("elevator_1")) {
                 		elevator2 = elevatorString;
                 		destinationElevator2 = peopleInElevator.toString();
-                	} else if (elevator.id.equals("elevator_bkp")) {
-                		elevator3 = elevatorString;
-                		destinationElevator3 = peopleInElevator.toString();
                 	}
                 }
             }
+            
+    		if (this.elevatorBackUp.currentFloor == nFloor) {
+	    		String elevatorBackUpDirection = this.elevatorBackUp.direction.name();
+	            String elevatorBackUpString = elevatorBackUpDirection + "#" + this.elevatorBackUp.peopleInElevator();
+	            elevator3 = elevatorBackUpString;
+	            ArrayList<String> peopleInElevatorBackUp = new ArrayList<>();
+	    		destinationElevator3 = peopleInElevatorBackUp.toString();
+    		}
     		
     		System.out.format(STATUS_FORMAT, floor, elevator1, elevator2, elevator3, buttonPulsed, 
     				destinationElevator1, destinationElevator2, destinationElevator3);
@@ -164,6 +172,9 @@ public class JarvisSystem {
             if (elevator.currentFloor == floor && elevator.status != ElevatorStatus.BROKEN) {
             	elevatorsInFloor.add(elevator);
             }
+        }
+        if (this.elevatorBackUp.currentFloor == floor && this.elevatorBackUp.status != ElevatorStatus.OFF) {
+        	elevatorsInFloor.add(this.elevatorBackUp);
         }
         
         // TODO: Check ElevatorBackUp
@@ -232,6 +243,11 @@ public class JarvisSystem {
 
 	public void notifyElevatorRepaired() {
 		this.elevatorBackUp.turnOff();
+		
+	}
+
+	public void notifyBreak() {
+		this.elevatorBackUp.turnOn();
 		
 	}
 
