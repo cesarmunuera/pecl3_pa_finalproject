@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 public class JarvisSystem {
@@ -14,7 +15,7 @@ public class JarvisSystem {
     private Map<Integer, Boolean> externalRequestedFloors;
     ElevatorBreaker elevatorBroker;
     ArrayList<JarvisRemoteControl> remotes;
-    private int elevatorsMovements = 0;
+    private final AtomicInteger movesCounter = new AtomicInteger(0);
 
     public void initElevators() {
     	this.elevators = new ArrayList<>(Configuration.JARVIS_N_ELEVATORS);
@@ -42,6 +43,31 @@ public class JarvisSystem {
     	this.initElevators();
         this.remotes = new ArrayList<>(Configuration.HOSPITAL_FLOOR_MAX + 1);
         logger.info("jarvis initialized!");
+    }
+    
+    
+    public int getMovesCounter() {
+        return movesCounter.get();
+    }
+    
+    public void addMovement() {
+        while(true) {
+            int existingValue = getMovesCounter();
+            int newValue = existingValue + 1;
+            if(movesCounter.compareAndSet(existingValue, newValue)) {
+            	if (getMovesCounter() == Configuration.ELEVATOR_MAX_PEOPLE) {
+            		this.turnSytemOff();
+            	}
+                return;
+            }
+        }
+    }
+    
+    public void turnSytemOff() {
+    	for (Elevator elevator : this.elevators) {
+    		elevator.turnOff();
+    	}
+    	elevatorBackUp.turnOff();
     }
 
     public void callElevator(int floor) {
@@ -80,10 +106,7 @@ public class JarvisSystem {
         int i = currentFloor;
         int stop;
 
-        if (direction == ElevatorDirection.UP) {
-            step = 1;
-            stop = Configuration.HOSPITAL_FLOOR_MAX;
-        } else if (direction == ElevatorDirection.DOWN) {
+        if (direction == ElevatorDirection.DOWN) {
             step = -1;
             stop = Configuration.HOSPITAL_FLOOR_MIN;
         } else {
@@ -130,7 +153,7 @@ public class JarvisSystem {
 				remote.notifyElevatorLeaving();
 			}
 		}
-		
+		this.addMovement();
 		// TODO: print system status
 	}
 
