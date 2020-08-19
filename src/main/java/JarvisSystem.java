@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 public class JarvisSystem {
 	
 	private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
+	
 	private static final String STATUS_FORMAT = "| %10s | %10s | %10s | %10s | %10s | %60s | %60s | %60s | \n";
 	private static final String EMPTY_STR = "";
 	private static final String YES_STR = "YES";
@@ -54,25 +55,25 @@ public class JarvisSystem {
     
     public synchronized void printStatus() {
     	String floor;
+    	String elevator0;
     	String elevator1;
     	String elevator2;
-    	String elevator3;
     	String buttonPulsed;
+    	String destinationElevator0;
     	String destinationElevator1;
     	String destinationElevator2;
-    	String destinationElevator3;
     	
-    	System.out.format(STATUS_FORMAT, "Floor", "Evt.1", "Evt.2", "Evt.3", "B.Pulsed", "Dest.Evt.1", "Dest.Evt.2", "Dest.Evt.3");
+    	System.out.format(STATUS_FORMAT, "Floor", "Evt.0", "Evt.1", "Evt.2", "B.Pulsed", "Dest.Evt.0", "Dest.Evt.1", "Dest.Evt.2");
     	int nFloor = Configuration.HOSPITAL_FLOOR_MAX;
     	while (nFloor != Configuration.HOSPITAL_FLOOR_MIN-1) {
     		floor = String.valueOf(nFloor);
+        	elevator0 = EMPTY_STR;
         	elevator1 = EMPTY_STR;
         	elevator2 = EMPTY_STR;
-        	elevator3 = EMPTY_STR;
         	buttonPulsed = NO_STR;
+        	destinationElevator0 = EMPTY_STR;
         	destinationElevator1 = EMPTY_STR;
         	destinationElevator2 = EMPTY_STR;
-        	destinationElevator3 = EMPTY_STR;
         	
         	if (isRemoteControlPulsed(nFloor)) {
     			buttonPulsed = YES_STR;
@@ -90,11 +91,11 @@ public class JarvisSystem {
                 	}
                 	String elevatorString = elevatorDirection + "#" + elevator.peopleInElevator();
                 	if (elevator.id.equals("elevator_0")) {
+                		elevator0 = elevatorString;
+                		destinationElevator0 = peopleInElevator.toString();
+                	} else if (elevator.id.equals("elevator_1")) {
                 		elevator1 = elevatorString;
                 		destinationElevator1 = peopleInElevator.toString();
-                	} else if (elevator.id.equals("elevator_1")) {
-                		elevator2 = elevatorString;
-                		destinationElevator2 = peopleInElevator.toString();
                 	}
                 }
             }
@@ -102,13 +103,13 @@ public class JarvisSystem {
     		if (this.elevatorBackUp.currentFloor == nFloor) {
 	    		String elevatorBackUpDirection = this.elevatorBackUp.direction.name();
 	            String elevatorBackUpString = elevatorBackUpDirection + "#" + this.elevatorBackUp.peopleInElevator();
-	            elevator3 = elevatorBackUpString;
+	            elevator2 = elevatorBackUpString;
 	            ArrayList<String> peopleInElevatorBackUp = new ArrayList<>();
-	    		destinationElevator3 = peopleInElevatorBackUp.toString();
+	    		destinationElevator2 = peopleInElevatorBackUp.toString();
     		}
     		
-    		System.out.format(STATUS_FORMAT, floor, elevator1, elevator2, elevator3, buttonPulsed, 
-    				destinationElevator1, destinationElevator2, destinationElevator3);
+    		System.out.format(STATUS_FORMAT, floor, elevator0, elevator1, elevator2, buttonPulsed, 
+    				destinationElevator0, destinationElevator1, destinationElevator2);
         	
         	nFloor--;
     	}
@@ -135,10 +136,10 @@ public class JarvisSystem {
             int existingValue = getMovesCounter();
             int newValue = existingValue + 1;
             if (movesCounter.compareAndSet(existingValue, newValue)) {
-            	if (getMovesCounter() == Configuration.ELEVATOR_MAX_PEOPLE) {
+            	if (getMovesCounter() == Configuration.ELEVATORS_MAX_MOVES) {
             		this.turnSytemOff();
             	}
-            	printStatus();
+            	
                 return;
             }
         }
@@ -238,10 +239,10 @@ public class JarvisSystem {
 			}
 		}
 		this.addMovement();
-		// TODO: print system status
+		printStatus();
 	}
 
-	public void notifyElevatorRepaired() {
+	public synchronized  void notifyElevatorRepaired() {
 		this.elevatorBackUp.turnOff();
 		
 	}

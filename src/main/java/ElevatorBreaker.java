@@ -1,14 +1,15 @@
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class ElevatorBreaker extends Thread {
 
-    ArrayList<Elevator> elevators;
+    List<Elevator> elevators;
     ElevatorBackUp elevatorBackUp;
     Random random = new Random();
 
-    public ElevatorBreaker(ArrayList<Elevator> elevators, ElevatorBackUp elevatorBackUp) {
+    public ElevatorBreaker(List<Elevator> elevators, ElevatorBackUp elevatorBackUp) {
         this.elevators = elevators;
         this.elevatorBackUp = elevatorBackUp;
     }
@@ -26,11 +27,13 @@ public class ElevatorBreaker extends Thread {
 
     public void brokeRandomElevator() {
         boolean choosen = false;
+        int randomNum;
+        Elevator elevator;
 
         while (!choosen) {
-            int randomNum = this.random.nextInt(this.elevators.size());
-            Elevator elevator = this.elevators.get(randomNum);
-            if (elevator.status != ElevatorStatus.BROKEN) {
+            randomNum = this.random.nextInt(this.elevators.size());
+            elevator = this.elevators.get(randomNum);
+            if (elevator.status == ElevatorStatus.STOPPED) {
                 elevator.broke();
                 choosen = true;
             }

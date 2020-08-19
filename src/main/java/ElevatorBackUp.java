@@ -7,15 +7,15 @@ public class ElevatorBackUp extends Elevator {
     
     @Override
     public void run() {
-        while (true) {
-        	if (this.status != ElevatorStatus.OFF) {
-        		this.moveToNextFloor();
+        while (this.status != ElevatorStatus.END) {
+            while (this.status != ElevatorStatus.OFF) {
+            	this.stopInFloor();
+                this.moveToNextFloor();
                 this.stopInFloor();
-            } else {
-            	evacuatePeople();
             }
-            
+            evacuatePeople();
         }
+        evacuatePeople();
     }
     
 }

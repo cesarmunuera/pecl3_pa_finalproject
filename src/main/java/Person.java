@@ -11,7 +11,7 @@ public class Person extends Thread {
     private String identificator;
     int sourceFloor;
     int floor;
-    int targetFloor;
+	int targetFloor;
     ElevatorDirection direction;
 
     public void chooseDirection() {
@@ -40,6 +40,14 @@ public class Person extends Thread {
     	return this.identificator + "->" + this.targetFloor;
 
     }
+    
+    public synchronized int getFloor() {
+		return floor;
+	}
+
+	public synchronized void setFloor(int floor) {
+		this.floor = floor;
+	}
 
     @Override
     public void run() {
@@ -83,7 +91,7 @@ public class Person extends Thread {
                 // elegir un elevador, y luego entrar en el elegido
                 boolean inside = choosenElevator.enter(this);
                 if (inside) {
-                    System.out.println("Person " + this.identificator + ": enter to elevator");
+                	//logger.info("Person " + this.identificator + ": enter to elevator");
                     //logger.info(this.toString() + " enter to elevator");
                     choosenElevator.waitFloor(this);
                     choosenElevator.out(this);
