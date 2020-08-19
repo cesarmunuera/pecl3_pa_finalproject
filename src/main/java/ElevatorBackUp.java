@@ -5,17 +5,4 @@ public class ElevatorBackUp extends Elevator {
         super(id, status, jarvisSystem);
     }
     
-    @Override
-    public void run() {
-        while (this.status != ElevatorStatus.END) {
-            while (this.status != ElevatorStatus.OFF) {
-            	this.stopInFloor();
-                this.moveToNextFloor();
-                this.stopInFloor();
-            }
-            evacuatePeople();
-        }
-        evacuatePeople();
-    }
-    
 }

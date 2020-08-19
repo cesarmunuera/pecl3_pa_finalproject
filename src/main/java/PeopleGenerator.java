@@ -57,6 +57,27 @@ public class PeopleGenerator extends Thread {
             
         }
         //logger.info("ends generating people");
-
     }
+
+	public Hospital getHospital() {
+		return hospital;
+	}
+
+	public void setHospital(Hospital hospital) {
+		this.hospital = hospital;
+	}
+
+	public int getPeopleCounter() {
+		return peopleCounter;
+	}
+
+	public void setPeopleCounter(int peopleCounter) {
+		this.peopleCounter = peopleCounter;
+	}
+
+	public static Logger getLogger() {
+		return logger;
+	}
+    
+    
 }

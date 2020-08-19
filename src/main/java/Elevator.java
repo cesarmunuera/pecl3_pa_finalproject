@@ -9,8 +9,8 @@ public class Elevator extends Thread {
 
     private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 
-    String id;
-    int currentFloor;
+    String identification;
+	int currentFloor;
     int previousFloor;
     Semaphore spaceSemaphore = new Semaphore(Configuration.ELEVATOR_MAX_PEOPLE, true);
     JarvisSystem jarvisSystem;
@@ -26,7 +26,7 @@ public class Elevator extends Thread {
 
     @Override
     public String toString() {
-        return "Elevator(" + this.id + ", floor = " + this.currentFloor + ", people = " + this.peopleInElevator()
+        return "Elevator(" + this.identification + ", floor = " + this.currentFloor + ", people = " + this.peopleInElevator()
                 + ", " + this.status.name() + ", " + this.direction.name() + ")";
     }
 
@@ -38,8 +38,8 @@ public class Elevator extends Thread {
         //logger.info("requested floors initialized");
     }
 
-    public Elevator(String id, ElevatorStatus status, JarvisSystem jarvisSystem) {
-        this.id = id;
+    public Elevator(String identification, ElevatorStatus status, JarvisSystem jarvisSystem) {
+        this.identification = identification;
         this.jarvisSystem = jarvisSystem;
         this.currentFloor = Configuration.HOSPITAL_FLOOR_MIN;
         this.previousFloor = Configuration.HOSPITAL_FLOOR_MIN;
@@ -302,5 +302,82 @@ public class Elevator extends Thread {
         }
         evacuatePeople();
     }
+    
+    public String getIdentification() {
+		return identification;
+	}
+
+	public void setIdentification(String id) {
+		this.identification = id;
+	}
+
+	public int getCurrentFloor() {
+		return currentFloor;
+	}
+
+	public void setCurrentFloor(int currentFloor) {
+		this.currentFloor = currentFloor;
+	}
+
+	public int getPreviousFloor() {
+		return previousFloor;
+	}
+
+	public void setPreviousFloor(int previousFloor) {
+		this.previousFloor = previousFloor;
+	}
+
+	public Semaphore getSpaceSemaphore() {
+		return spaceSemaphore;
+	}
+
+	public void setSpaceSemaphore(Semaphore spaceSemaphore) {
+		this.spaceSemaphore = spaceSemaphore;
+	}
+
+	public JarvisSystem getJarvisSystem() {
+		return jarvisSystem;
+	}
+
+	public void setJarvisSystem(JarvisSystem jarvisSystem) {
+		this.jarvisSystem = jarvisSystem;
+	}
+
+	public ArrayList<Person> getSpace() {
+		return space;
+	}
+
+	public void setSpace(ArrayList<Person> space) {
+		this.space = space;
+	}
+
+	public Map<Integer, Boolean> getRequestedFloors() {
+		return requestedFloors;
+	}
+
+	public void setRequestedFloors(Map<Integer, Boolean> requestedFloors) {
+		this.requestedFloors = requestedFloors;
+	}
+
+	public ElevatorStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(ElevatorStatus status) {
+		this.status = status;
+	}
+
+	public ElevatorDirection getDirection() {
+		return direction;
+	}
+
+	public void setDirection(ElevatorDirection direction) {
+		this.direction = direction;
+	}
+
+	public static Logger getLogger() {
+		return logger;
+	}
+	
 
 }

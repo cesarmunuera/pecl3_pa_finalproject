@@ -90,10 +90,10 @@ public class JarvisSystem {
                 		elevatorDirection = "KO";
                 	}
                 	String elevatorString = elevatorDirection + "#" + elevator.peopleInElevator();
-                	if (elevator.id.equals("elevator_0")) {
+                	if (elevator.identification.equals("elevator_0")) {
                 		elevator0 = elevatorString;
                 		destinationElevator0 = peopleInElevator.toString();
-                	} else if (elevator.id.equals("elevator_1")) {
+                	} else if (elevator.identification.equals("elevator_1")) {
                 		elevator1 = elevatorString;
                 		destinationElevator1 = peopleInElevator.toString();
                 	}
@@ -251,5 +251,42 @@ public class JarvisSystem {
 		this.elevatorBackUp.turnOn();
 		
 	}
+
+	public ArrayList<Elevator> getElevators() {
+		return elevators;
+	}
+
+	public void setElevators(ArrayList<Elevator> elevators) {
+		this.elevators = elevators;
+	}
+
+	public ElevatorBackUp getElevatorBackUp() {
+		return elevatorBackUp;
+	}
+
+	public void setElevatorBackUp(ElevatorBackUp elevatorBackUp) {
+		this.elevatorBackUp = elevatorBackUp;
+	}
+
+	public ElevatorBreaker getElevatorBreaker() {
+		return elevatorBreaker;
+	}
+
+	public void setElevatorBreaker(ElevatorBreaker elevatorBreaker) {
+		this.elevatorBreaker = elevatorBreaker;
+	}
+
+	public ArrayList<JarvisRemoteControl> getRemotes() {
+		return remotes;
+	}
+
+	public void setRemotes(ArrayList<JarvisRemoteControl> remotes) {
+		this.remotes = remotes;
+	}
+
+	public static Logger getLogger() {
+		return logger;
+	}
+	
 
 }

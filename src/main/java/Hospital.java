@@ -5,11 +5,13 @@ public class Hospital {
 	
 	private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 	
-	ArrayList<HospitalFloor> floors = new ArrayList<>();
+	ArrayList<HospitalFloor> floors;
 	JarvisSystem jarvisSystem = new JarvisSystem();
 	
+
 	public void initFloors() {
 		//logger.info("initializing floors");
+		this.floors = new ArrayList<>();
 		JarvisRemoteControl remote;
 		HospitalFloor floor;
 		
@@ -22,6 +24,7 @@ public class Hospital {
 	
 	public Hospital() {
 		this.initFloors();
+		this.jarvisSystem = new JarvisSystem();
 		//logger.info("initialized with " + this.floors.size() + " floors");
 	}
 
@@ -35,6 +38,26 @@ public class Hospital {
 			
 		}
 		return selectedFloor;
+	}
+	
+	public ArrayList<HospitalFloor> getFloors() {
+		return floors;
+	}
+
+	public void setFloors(ArrayList<HospitalFloor> floors) {
+		this.floors = floors;
+	}
+
+	public JarvisSystem getJarvisSystem() {
+		return jarvisSystem;
+	}
+
+	public void setJarvisSystem(JarvisSystem jarvisSystem) {
+		this.jarvisSystem = jarvisSystem;
+	}
+
+	public static Logger getLogger() {
+		return logger;
 	}
 
 }
