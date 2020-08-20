@@ -36,18 +36,24 @@ public class Person extends Thread {
 
     @Override
     public String toString() {
-        //return "Person(" + this.identificator + ", " + this.floor + ", " + this.sourceFloor + " -> " + this.targetFloor + ", " + this.direction.name() + ")";
-    	return this.identificator + "->" + this.targetFloor;
+        return "Person(" + this.identificator + ", " + this.floor + ", " + this.sourceFloor + "->" + this.targetFloor + ", " + this.direction.name() + ")";
+    	//return this.identificator + "->" + this.targetFloor;
 
     }
     
-    public synchronized int getFloor() {
-		return floor;
-	}
+    public void waitFloor(Elevator elevator) {
+    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " waiting floor - " + elevator.toString());
+        boolean isInTargetFloor = false;
+        try {
+            while (!isInTargetFloor) {
+            	this.floor = elevator.getCurrentFloor();
+                this.hospitalFloor = elevator.getHospitalFloor(this.floor);
+                isInTargetFloor = elevator.currentFloor == this.targetFloor;
+            }
+        } catch (Exception e) {
+        }
 
-	public synchronized void setFloor(int floor) {
-		this.floor = floor;
-	}
+    }
 
     @Override
     public void run() {
@@ -62,7 +68,7 @@ public class Person extends Thread {
 
             for (Elevator elevator : elevators) {
                 if (elevator != null) {
-                    if (elevator.status != ElevatorStatus.BROKEN) {
+                    if (elevator.status != ElevatorStatus.BROKEN && elevator.status != ElevatorStatus.OFF) {
                         if (elevator.direction == this.direction || elevator.direction == ElevatorDirection.NONE) {
                             choosenElevator = elevator;
                             break;
@@ -91,7 +97,8 @@ public class Person extends Thread {
                 if (inside) {
                 	if (Configuration.LOGGING_ON) logger.info("Person " + this.identificator + ": enter to elevator");
                 	if (Configuration.LOGGING_ON) logger.info(this.toString() + " enter to elevator");
-                    choosenElevator.waitFloor(this);
+                    //choosenElevator.waitFloor(this);
+                	waitFloor(choosenElevator);
                     choosenElevator.out(this);
                     if (Configuration.LOGGING_ON) logger.info(this.toString() + " go out to floor " + this.floor);
                     if (this.floor == this.targetFloor) {
@@ -113,7 +120,7 @@ public class Person extends Thread {
             } else {
                 // wait until all elevators leave floor
                 for (Elevator elevator : elevators) {
-                    while (this.floor == elevator.currentFloor && elevator.status == ElevatorStatus.STOPPED) {
+                    while (this.floor == elevator.currentFloor) {
                         try {
                             Thread.sleep(5);
                         } catch (InterruptedException e) {
@@ -126,6 +133,14 @@ public class Person extends Thread {
         }
         if (Configuration.LOGGING_ON) logger.info(this.toString() + " ends");
     }
+    
+    public synchronized int getFloor() {
+		return floor;
+	}
+
+	public synchronized void setFloor(int floor) {
+		this.floor = floor;
+	}
 
 	public HospitalFloor getHospitalFloor() {
 		return hospitalFloor;

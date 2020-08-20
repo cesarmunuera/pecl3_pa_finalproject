@@ -10,7 +10,8 @@ public class JarvisSystem {
 	
 	private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 	
-	private static final String STATUS_FORMAT = "| %10s | %10s | %10s | %10s | %10s | %60s | %60s | %60s | \n";
+	private Hospital hospital;
+	private static final String STATUS_FORMAT = "| %5s | %8s | %8s | %8s | %8s | %60s | %60s | %60s | \n";
 	private static final String EMPTY_STR = "";
 	private static final String YES_STR = "YES";
 	private static final String NO_STR = "no";
@@ -45,8 +46,9 @@ public class JarvisSystem {
         }
     }
 
-    public JarvisSystem() {
+    public JarvisSystem(Hospital hospital) {
     	if (Configuration.LOGGING_ON) logger.info("initializing jarvis");
+    	this.hospital = hospital;
     	this.initRequestedFloors();
     	this.initElevators();
         this.remotes = new ArrayList<>(Configuration.HOSPITAL_FLOOR_MAX + 1);
@@ -82,7 +84,7 @@ public class JarvisSystem {
     		for (Elevator elevator : this.elevators) {
                 if (elevator.currentFloor == nFloor) {
                 	ArrayList<String> peopleInElevator = new ArrayList<>();
-                	for (Person person: elevator.space) {
+                	for (Person person: elevator.getSpace()) {
                 		peopleInElevator.add(person.toString());
                 	}
                 	String elevatorDirection = elevator.direction.name();
@@ -285,6 +287,10 @@ public class JarvisSystem {
 
 	public static Logger getLogger() {
 		return logger;
+	}
+
+	public HospitalFloor getHospitalFloor(int nFloor) {
+		return this.hospital.getFloor(nFloor);
 	}
 	
 

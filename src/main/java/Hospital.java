@@ -6,7 +6,7 @@ public class Hospital {
 	private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 	
 	ArrayList<HospitalFloor> floors;
-	JarvisSystem jarvisSystem = new JarvisSystem();
+	JarvisSystem jarvisSystem;
 	
 
 	public void initFloors() {
@@ -23,8 +23,8 @@ public class Hospital {
 	}
 	
 	public Hospital() {
+		this.jarvisSystem = new JarvisSystem(this);
 		this.initFloors();
-		this.jarvisSystem = new JarvisSystem();
 		if (Configuration.LOGGING_ON) logger.info("initialized with " + this.floors.size() + " floors");
 	}
 

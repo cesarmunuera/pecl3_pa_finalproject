@@ -47,7 +47,7 @@ public class ElevatorBreaker extends Thread {
     public void run() {
         while (true) {
             sleepRandomTime();
-            brokeRandomElevator();
+            //brokeRandomElevator();
 
         }
     }
