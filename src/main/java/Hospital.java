@@ -5,8 +5,8 @@ public class Hospital {
 	
 	private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 	
-	ArrayList<HospitalFloor> floors;
-	JarvisSystem jarvisSystem = new JarvisSystem();
+	private ArrayList<HospitalFloor> floors;
+	private JarvisSystem jarvisSystem;
 	
 
 	public void initFloors() {
@@ -16,22 +16,22 @@ public class Hospital {
 		HospitalFloor floor;
 		
 		for (int nFloor=Configuration.HOSPITAL_FLOOR_MIN; nFloor<=Configuration.HOSPITAL_FLOOR_MAX; nFloor++) { 
-			remote = new JarvisRemoteControl(this.jarvisSystem, nFloor);
+			remote = new JarvisRemoteControl(jarvisSystem, nFloor);
 			floor = new HospitalFloor(nFloor, remote);
-			floors.add(floor);
+			this.floors.add(floor);
 		}
 	}
 	
 	public Hospital() {
+		this.jarvisSystem = new JarvisSystem(this);
 		this.initFloors();
-		this.jarvisSystem = new JarvisSystem();
 		if (Configuration.LOGGING_ON) logger.info("initialized with " + this.floors.size() + " floors");
 	}
 
-	public HospitalFloor getFloor(int currentFloor) {
+	public HospitalFloor getFloor(int nFloor) {
 		HospitalFloor selectedFloor = null;
-		for (HospitalFloor floor: this.floors) {
-			if (floor.floor == currentFloor) {
+		for (HospitalFloor floor: floors) {
+			if (floor.getFloor() == nFloor) {
 				selectedFloor = floor;
 				break;
 			}
@@ -40,24 +40,5 @@ public class Hospital {
 		return selectedFloor;
 	}
 	
-	public ArrayList<HospitalFloor> getFloors() {
-		return floors;
-	}
-
-	public void setFloors(ArrayList<HospitalFloor> floors) {
-		this.floors = floors;
-	}
-
-	public JarvisSystem getJarvisSystem() {
-		return jarvisSystem;
-	}
-
-	public void setJarvisSystem(JarvisSystem jarvisSystem) {
-		this.jarvisSystem = jarvisSystem;
-	}
-
-	public static Logger getLogger() {
-		return logger;
-	}
-
+	
 }

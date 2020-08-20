@@ -8,21 +8,19 @@ import java.util.logging.Logger;
 public class Elevator extends Thread {
 
     private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
+    private static final int EXITING_MS = 300;
+    private static final int STOPPED_MS = 300;
 
-    String identification;
-	int currentFloor;
-    int previousFloor;
-    Semaphore spaceSemaphore = new Semaphore(Configuration.ELEVATOR_MAX_PEOPLE, true);
-    JarvisSystem jarvisSystem;
-    ArrayList<Person> space = new ArrayList<Person>(Configuration.ELEVATOR_MAX_PEOPLE);
-    Map<Integer, Boolean> requestedFloors;
-    ElevatorStatus status;
-    ElevatorDirection direction;
-
-    public int peopleInElevator() {
-        return space.size();
-
-    }
+    private String identification;
+    private int currentFloor;
+    private int previousFloor;
+    private Semaphore spaceSemaphore = new Semaphore(Configuration.ELEVATOR_MAX_PEOPLE, true);
+    private JarvisSystem jarvisSystem;
+    private ArrayList<Person> space = new ArrayList<>(Configuration.ELEVATOR_MAX_PEOPLE);
+    private Map<Integer, Boolean> requestedFloors;
+    private ElevatorStatus status;
+    private ElevatorDirection direction;
+    
 
     public void initRequestedFloors() {
         this.requestedFloors = new HashMap<>();
@@ -42,73 +40,78 @@ public class Elevator extends Thread {
         this.initRequestedFloors();
     }
     
+    public int peopleInElevator() {
+        return space.size();
+
+    }
+    
     @Override
     public String toString() {
-        return "Elevator(" + this.identification + ", floor = " + this.currentFloor + ", people = " + this.peopleInElevator()
-                + ", " + this.status.name() + ", " + this.direction.name() + ")";
+        return "Elevator(" + identification + ", floor=" + currentFloor + ", people=" + peopleInElevator()
+                + ", " + status.name() + ", " + direction.name() + ")";
     }
 
     public void turnOn() {
-    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " turning on");
-    	this.status = ElevatorStatus.STOPPED;
-        this.direction = ElevatorDirection.NONE;
+    	if (Configuration.LOGGING_ON) logger.info(toString() + " turning on");
+    	status = ElevatorStatus.STOPPED;
+        direction = ElevatorDirection.NONE;
         
     }
 
     public void turnOff() {
-    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " turning off");
-        this.status = ElevatorStatus.OFF;
-        this.direction = ElevatorDirection.NONE;
-        this.evacuatePeople();
+    	if (Configuration.LOGGING_ON) logger.info(toString() + " turning off");
+    	status = ElevatorStatus.OFF;
+    	direction = ElevatorDirection.NONE;
+        evacuatePeople();
         
     }
     
     public void turnEnd() {
-    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " turning end");
-    	this.status = ElevatorStatus.END;
-        this.direction = ElevatorDirection.NONE;
-        this.evacuatePeople();
+    	if (Configuration.LOGGING_ON) logger.info(toString() + " turning end");
+    	status = ElevatorStatus.END;
+    	direction = ElevatorDirection.NONE;
+        evacuatePeople();
         
     }
 
     public void broke() {
-    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " breaking up");
-        this.status = ElevatorStatus.BROKEN;
-        this.direction = ElevatorDirection.NONE;
-        this.jarvisSystem.notifyBreak();
+    	if (Configuration.LOGGING_ON) logger.info(toString() + " breaking up");
+    	status = ElevatorStatus.BROKEN;
+    	direction = ElevatorDirection.NONE;
+        jarvisSystem.notifyBreak();
         
     }
 
     public synchronized void evacuatePeople() {
-    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " start evacuating people");
+    	if (Configuration.LOGGING_ON) logger.info(toString() + " start evacuating people");
         
-    	for (Person person : this.space) {
-            person.floor = this.currentFloor;
+    	for (Person person: space) {
+            person.setFloor(currentFloor);
             person.interrupt();
         }
     	
-        if (Configuration.LOGGING_ON) logger.info(this.toString() + " evacuated people");
+        if (Configuration.LOGGING_ON) logger.info(toString() + " evacuated people");
     }
 
     public void move() {
-        this.status = ElevatorStatus.MOVE;
-        if (Configuration.LOGGING_ON) logger.info(this.toString() + " continue moving ");
+        status = ElevatorStatus.MOVE;
+        if (Configuration.LOGGING_ON) logger.info(toString() + " continue moving ");
         
         try {
             Thread.sleep((long) Configuration.ELEVATOR_MOVE_MS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (this.direction == ElevatorDirection.UP) {
-            this.previousFloor = this.currentFloor;
-            this.currentFloor++;
-        } else if (this.direction == ElevatorDirection.DOWN) {
-            this.previousFloor = this.currentFloor;
-            this.currentFloor--;
+        if (direction == ElevatorDirection.UP) {
+            previousFloor = currentFloor;
+            currentFloor++;
+        } else if (direction == ElevatorDirection.DOWN) {
+        	previousFloor = currentFloor;
+        	currentFloor--;
         }
         
-        if (Configuration.LOGGING_ON) logger.info(this.toString() + " move to floor " + this.currentFloor);
-        this.jarvisSystem.notifyFloorMove(this.currentFloor);
+        if (Configuration.LOGGING_ON) logger.info(toString() + " move to floor " + currentFloor);
+        jarvisSystem.notifyFloorMove(currentFloor);
     }
 
     public boolean checkRemainingRequestedFloors(int from, int to, Map<Integer, Boolean> map) {
@@ -129,8 +132,8 @@ public class Elevator extends Thread {
 
     public boolean remainingRequestedUpperFloors() {
         boolean remaining = false;
-        if (this.currentFloor < Configuration.HOSPITAL_FLOOR_MAX) {
-            remaining = this.checkRemainingRequestedFloors(this.currentFloor + 1, Configuration.HOSPITAL_FLOOR_MAX, this.requestedFloors);
+        if (currentFloor < Configuration.HOSPITAL_FLOOR_MAX) {
+            remaining = checkRemainingRequestedFloors(currentFloor + 1, Configuration.HOSPITAL_FLOOR_MAX, requestedFloors);
         }
         return remaining;
 
@@ -138,109 +141,115 @@ public class Elevator extends Thread {
 
     public boolean remainingExternalRequestedUpperFloors() {
         boolean remaining = false;
-        if (this.currentFloor < Configuration.HOSPITAL_FLOOR_MAX) {
-            remaining = this.checkRemainingRequestedFloors(this.currentFloor + 1, Configuration.HOSPITAL_FLOOR_MAX, this.jarvisSystem.getExternalRequestedFloors());
+        if (currentFloor < Configuration.HOSPITAL_FLOOR_MAX) {
+            remaining = checkRemainingRequestedFloors(currentFloor + 1, Configuration.HOSPITAL_FLOOR_MAX, jarvisSystem.getExternalRequestedFloors());
         }
         return remaining;
     }
 
     public boolean remainingRequestedLowerFloors() {
         boolean remaining = false;
-        if (this.currentFloor > Configuration.HOSPITAL_FLOOR_MIN) {
-            remaining = this.checkRemainingRequestedFloors(this.currentFloor - 1, Configuration.HOSPITAL_FLOOR_MIN, this.requestedFloors);
+        if (currentFloor > Configuration.HOSPITAL_FLOOR_MIN) {
+            remaining = checkRemainingRequestedFloors(currentFloor - 1, Configuration.HOSPITAL_FLOOR_MIN, requestedFloors);
         }
         return remaining;
     }
 
     public boolean remaininExternalRequestedLowerFloors() {
         boolean remaining = false;
-        if (this.currentFloor > Configuration.HOSPITAL_FLOOR_MIN) {
-            remaining = this.checkRemainingRequestedFloors(this.currentFloor - 1, Configuration.HOSPITAL_FLOOR_MIN, this.jarvisSystem.getExternalRequestedFloors());
+        if (currentFloor > Configuration.HOSPITAL_FLOOR_MIN) {
+            remaining = checkRemainingRequestedFloors(currentFloor - 1, Configuration.HOSPITAL_FLOOR_MIN, jarvisSystem.getExternalRequestedFloors());
         }
         return remaining;
     }
 
     public void moveToNextFloor() {
-        boolean internalUpperRequestedFloors = this.remainingRequestedUpperFloors();
-        boolean externalUpperRequestedFloors = this.remainingExternalRequestedUpperFloors();
-        boolean internalLowerRequestedFloors = this.remainingRequestedLowerFloors();
-        boolean externalLowerRequestedFloors = this.remaininExternalRequestedLowerFloors();
+        boolean internalUpperRequestedFloors = remainingRequestedUpperFloors();
+        boolean externalUpperRequestedFloors = remainingExternalRequestedUpperFloors();
+        boolean internalLowerRequestedFloors = remainingRequestedLowerFloors();
+        boolean externalLowerRequestedFloors = remaininExternalRequestedLowerFloors();
         boolean move = false;
 
-        if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MIN) {
-            this.direction = ElevatorDirection.UP;
+        if (currentFloor == Configuration.HOSPITAL_FLOOR_MIN) {
+            direction = ElevatorDirection.UP;
 
-        } else if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MAX) {
-            this.direction = ElevatorDirection.DOWN;
+        } else if (currentFloor == Configuration.HOSPITAL_FLOOR_MAX) {
+            direction = ElevatorDirection.DOWN;
 
         }
 
-        if (this.direction == ElevatorDirection.UP) {
+        if (direction == ElevatorDirection.UP) {
             if (internalUpperRequestedFloors || externalUpperRequestedFloors) {
                 move = true;
             } else {
-                this.direction = ElevatorDirection.NONE;
+                direction = ElevatorDirection.NONE;
             }
         }
-        if (this.direction == ElevatorDirection.DOWN) {
+        if (direction == ElevatorDirection.DOWN) {
             if (internalLowerRequestedFloors || externalLowerRequestedFloors) {
                 move = true;
             } else {
-                this.direction = ElevatorDirection.NONE;
+                direction = ElevatorDirection.NONE;
             }
         }
-        if (this.direction == ElevatorDirection.NONE) {
+        if (direction == ElevatorDirection.NONE) {
             if (internalUpperRequestedFloors || externalUpperRequestedFloors) {
-                this.direction = ElevatorDirection.UP;
+                direction = ElevatorDirection.UP;
                 move = true;
             } else {
                 if (internalLowerRequestedFloors || externalLowerRequestedFloors) {
-                    this.direction = ElevatorDirection.DOWN;
+                    direction = ElevatorDirection.DOWN;
                     move = true;
                 }
             }
         }
 
         if (move) {
-            this.move();
+            move();
+        }
+        
+        if (currentFloor == Configuration.HOSPITAL_FLOOR_MAX) {
+        	direction = ElevatorDirection.DOWN;
+        } else if (currentFloor == Configuration.HOSPITAL_FLOOR_MIN) {
+        	direction = ElevatorDirection.UP;
         }
     }
 
     public void waitInFloor() {
-    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " arrived to floor " + this.currentFloor);
-        this.status = ElevatorStatus.EXITING;
+    	if (Configuration.LOGGING_ON) logger.info(toString() + " arrived to floor " + currentFloor);
+        status = ElevatorStatus.EXITING;
         try {
-            sleep((long) 300);
+            sleep((long) EXITING_MS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        this.status = ElevatorStatus.STOPPED;
+        status = ElevatorStatus.STOPPED;
         try {
-            sleep((long) 300);
+            sleep((long) STOPPED_MS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     public void stopInFloor() {
-        if (this.status == ElevatorStatus.BROKEN) {
-            this.evacuatePeople();
-            this.repair();
+        if (status == ElevatorStatus.BROKEN) {
+            evacuatePeople();
+            repair();
         } else {
-	        boolean floorInternalRequired = this.requestedFloors.get(this.currentFloor);
-	        boolean floorExternalRequired = this.jarvisSystem.getExternalRequestedFloors().get(this.currentFloor);
+	        boolean floorInternalRequired = requestedFloors.get(currentFloor);
+	        boolean floorExternalRequired = jarvisSystem.getExternalRequestedFloors().get(currentFloor);
 	        if (floorInternalRequired || floorExternalRequired) {
-	        	if (Configuration.LOGGING_ON) logger.info(this.toString() + " stopping in floor " + this.currentFloor);
-	            this.requestedFloors.put(this.currentFloor, false);
-	            this.jarvisSystem.getExternalRequestedFloors().put(this.currentFloor, false);
-	            this.jarvisSystem.notifyFloorStop(this.currentFloor);
-	            this.waitInFloor();
+	        	if (Configuration.LOGGING_ON) logger.info(toString() + " stopping in floor " + currentFloor);
+	            requestedFloors.put(currentFloor, false);
+	            jarvisSystem.getExternalRequestedFloors().put(currentFloor, false);
+	            jarvisSystem.notifyFloorStop(currentFloor);
+	            waitInFloor();
 	        }
         }
     }
 
     public void repair() {
-    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " starts repairing");
+    	if (Configuration.LOGGING_ON) logger.info(toString() + " starts repairing");
         double randomTime = (Math.random() * (Configuration.ELEVATOR_REPAIR_MAX_MS - Configuration.ELEVATOR_REPAIR_MIN_MS + 1)
                 + Configuration.ELEVATOR_REPAIR_MIN_MS);
 
@@ -249,60 +258,64 @@ public class Elevator extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        this.initRequestedFloors();
-        this.status = ElevatorStatus.STOPPED;
-        this.jarvisSystem.notifyElevatorRepaired();
-        if (Configuration.LOGGING_ON) logger.info(this.toString() + " ends repairing");
+        initRequestedFloors();
+        status = ElevatorStatus.STOPPED;
+        jarvisSystem.notifyElevatorRepaired();
+        if (Configuration.LOGGING_ON) logger.info(toString() + " ends repairing");
     }
 
     public boolean enter(Person person) {
-    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " trying enter - " + person.toString());
+    	if (Configuration.LOGGING_ON) logger.info(toString() + " trying enter - " + person.toString());
         boolean inside = false;
-        inside = this.spaceSemaphore.tryAcquire();
+        inside = spaceSemaphore.tryAcquire();
         if (inside) {
-            this.space.add(person);
-            if (Configuration.LOGGING_ON) logger.info(this.toString() + " inside - " + person.toString());
-            this.requestFloor(person.targetFloor);
+            space.add(person);
+            if (Configuration.LOGGING_ON) logger.info(toString() + " inside - " + person.toString());
+            requestFloor(person.getTargetFloor());
         }
 
         return inside;
     }
 
     public void requestFloor(int floor) {
-        this.requestedFloors.put(floor, true);
+        requestedFloors.put(floor, true);
     }
 
     public void waitFloor(Person person) {
-    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " waiting floor - " + person.toString());
+    	if (Configuration.LOGGING_ON) logger.info(toString() + " waiting floor - " + person.toString());
         boolean isInTargetFloor = false;
         try {
             while (!isInTargetFloor) {
                 Thread.sleep(5);
-                isInTargetFloor = this.currentFloor == person.targetFloor;
-                person.floor = this.currentFloor;
+                isInTargetFloor = currentFloor == person.getTargetFloor();
+                person.setFloor(currentFloor);
             }
         } catch (Exception e) {
             // se evacua a la persona 
-            this.out(person);
+        	System.out.println("Evacuando a la persona: " + person.toString());
+            out(person);
         }
 
     }
 
     public void out(Person person) {
-        person.floor = this.currentFloor;
-        this.space.remove(person);
-        this.spaceSemaphore.release();
-        if (Configuration.LOGGING_ON) logger.info(this.toString() + " went out - " + person.toString());
+        person.setFloor(currentFloor);
+        person.setHospitalFloor(jarvisSystem.getHospitalFloor(currentFloor));
+        space.remove(person);
+        spaceSemaphore.release();
+        if (Configuration.LOGGING_ON) logger.info(toString() + " went out - " + person.toString());
     }
 
     @Override
     public void run() {
-        while (this.status != ElevatorStatus.END) {
-            while (this.status != ElevatorStatus.OFF) {
-            	this.stopInFloor();
-                this.moveToNextFloor();
-                this.stopInFloor();
+        while (status != ElevatorStatus.END) {
+        	
+            while (status != ElevatorStatus.OFF) {
+            	stopInFloor();
+                moveToNextFloor();
+                
             }
+            stopInFloor();
             evacuatePeople();
         }
         evacuatePeople();
@@ -312,77 +325,21 @@ public class Elevator extends Thread {
 		return identification;
 	}
 
-	public void setIdentification(String id) {
-		this.identification = id;
-	}
-
 	public int getCurrentFloor() {
 		return currentFloor;
-	}
-
-	public void setCurrentFloor(int currentFloor) {
-		this.currentFloor = currentFloor;
-	}
-
-	public int getPreviousFloor() {
-		return previousFloor;
-	}
-
-	public void setPreviousFloor(int previousFloor) {
-		this.previousFloor = previousFloor;
-	}
-
-	public Semaphore getSpaceSemaphore() {
-		return spaceSemaphore;
-	}
-
-	public void setSpaceSemaphore(Semaphore spaceSemaphore) {
-		this.spaceSemaphore = spaceSemaphore;
-	}
-
-	public JarvisSystem getJarvisSystem() {
-		return jarvisSystem;
-	}
-
-	public void setJarvisSystem(JarvisSystem jarvisSystem) {
-		this.jarvisSystem = jarvisSystem;
 	}
 
 	public ArrayList<Person> getSpace() {
 		return space;
 	}
 
-	public void setSpace(ArrayList<Person> space) {
-		this.space = space;
-	}
-
-	public Map<Integer, Boolean> getRequestedFloors() {
-		return requestedFloors;
-	}
-
-	public void setRequestedFloors(Map<Integer, Boolean> requestedFloors) {
-		this.requestedFloors = requestedFloors;
-	}
-
 	public ElevatorStatus getStatus() {
 		return status;
-	}
-
-	public void setStatus(ElevatorStatus status) {
-		this.status = status;
 	}
 
 	public ElevatorDirection getDirection() {
 		return direction;
 	}
 
-	public void setDirection(ElevatorDirection direction) {
-		this.direction = direction;
-	}
-
-	public static Logger getLogger() {
-		return logger;
-	}
-	
 
 }

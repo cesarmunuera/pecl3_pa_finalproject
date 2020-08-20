@@ -5,10 +5,10 @@ public class HospitalFloor {
 	
 	private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 
-    int floor;
-    JarvisRemoteControl jarvisRemoteControl;
-    boolean elevatorInFloor = false;
-    boolean waitingElevator = false;
+    private int floor;
+    private JarvisRemoteControl jarvisRemoteControl;
+    private boolean elevatorInFloor = false;
+    private boolean waitingElevator = false;
 
     public HospitalFloor(int floor, JarvisRemoteControl jarvisRemoteControl) {
 		this.floor = floor;
@@ -18,31 +18,23 @@ public class HospitalFloor {
     
     @Override
 	public String toString() {
-		return "HospitalFloor(" + this.floor + ")";
+		return "HospitalFloor(" + floor + ")";
 	}
 
 	public void callElevator() {
-        this.jarvisRemoteControl.callElevator();
+        jarvisRemoteControl.callElevator();
     }
 
     public ArrayList<Elevator> getElevators() {
-        return this.jarvisRemoteControl.getElevatorsInFloor(this.floor);
+        return jarvisRemoteControl.getElevatorsInFloor(getFloor());
     }
 
 	public int getFloor() {
 		return floor;
 	}
 
-	public void setFloor(int floor) {
-		this.floor = floor;
-	}
-
 	public JarvisRemoteControl getJarvisRemoteControl() {
 		return jarvisRemoteControl;
-	}
-
-	public void setJarvisRemoteControl(JarvisRemoteControl jarvisRemoteControl) {
-		this.jarvisRemoteControl = jarvisRemoteControl;
 	}
 
 	public boolean isElevatorInFloor() {
@@ -61,10 +53,5 @@ public class HospitalFloor {
 		this.waitingElevator = waitingElevator;
 	}
 
-	public static Logger getLogger() {
-		return logger;
-	}
-    
-    
 
 }

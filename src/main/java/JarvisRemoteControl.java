@@ -8,12 +8,12 @@ public class JarvisRemoteControl {
 	
 	private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 	
-	JarvisSystem jarvisSystem;
-	int value;
-	boolean active; // condition
-	boolean elevatorInFloor;
-	final Lock lock;
-	final Condition elevatorInFloorCondition; 
+	private JarvisSystem jarvisSystem;
+	private int value;
+	private boolean active; // condition
+	private boolean elevatorInFloor;
+	private final Lock lock;
+	private final Condition elevatorInFloorCondition; 
 	
 	public JarvisRemoteControl(JarvisSystem jarvisSystem, int value) {
 		this.jarvisSystem = jarvisSystem;
@@ -28,7 +28,7 @@ public class JarvisRemoteControl {
 	
 	@Override
 	public String toString() {
-		return "JarvisRemote(" + this.value + ")";
+		return "JarvisRemote(" + value + ")";
 	}
 	
 	public void waitForElevator() {
@@ -47,9 +47,9 @@ public class JarvisRemoteControl {
 	}
 	
 	public void callElevator() {
-		if (!this.active) {
-			this.jarvisSystem.callElevator(this.value);
-			this.active = true;
+		if (!active) {
+			jarvisSystem.callElevator(value);
+			active = true;
 			if (Configuration.LOGGING_ON) logger.info(this.toString() + " call elevator");
 		} else {
 			if (Configuration.LOGGING_ON) logger.info(this.toString() + " elevator already called ");
@@ -61,68 +61,34 @@ public class JarvisRemoteControl {
 		if (Configuration.LOGGING_ON) logger.info(this.toString() + " elevator arrives - wake up people waiting");
 		try {
 			lock.lock();
-			this.elevatorInFloor = true;
+			elevatorInFloor = true;
 			elevatorInFloorCondition.signal();
-			}
+		}
 		finally {
 			lock.unlock();
 		}
 	}
 
 	public void notifyElevatorLeaving() {
-		this.elevatorInFloor = false;
-		this.active = false;
-		
+		elevatorInFloor = false;
+		active = false;
 	}
 
 	public ArrayList<Elevator> getElevatorsInFloor(int floor) {
-		return this.jarvisSystem.getElevatorsInFloor(floor);
-	}
-
-	public JarvisSystem getJarvisSystem() {
-		return jarvisSystem;
-	}
-
-	public void setJarvisSystem(JarvisSystem jarvisSystem) {
-		this.jarvisSystem = jarvisSystem;
+		return jarvisSystem.getElevatorsInFloor(floor);
 	}
 
 	public int getValue() {
 		return value;
 	}
 
-	public void setValue(int value) {
-		this.value = value;
-	}
-
 	public boolean isActive() {
 		return active;
-	}
-
-	public void setActive(boolean active) {
-		this.active = active;
 	}
 
 	public boolean isElevatorInFloor() {
 		return elevatorInFloor;
 	}
 
-	public void setElevatorInFloor(boolean elevatorInFloor) {
-		this.elevatorInFloor = elevatorInFloor;
-	}
-
-	public static Logger getLogger() {
-		return logger;
-	}
-
-	public Lock getLock() {
-		return lock;
-	}
-
-	public Condition getElevatorInFloorCondition() {
-		return elevatorInFloorCondition;
-	}
-	
-	
 
 }

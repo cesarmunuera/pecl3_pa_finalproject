@@ -13,13 +13,15 @@ public class JarvisSystem {
 	private static final String STATUS_FORMAT = "| %10s | %10s | %10s | %10s | %10s | %60s | %60s | %60s | \n";
 	private static final String EMPTY_STR = "";
 	private static final String YES_STR = "YES";
+	private static final String KO_STR = "KO";
 	private static final String NO_STR = "no";
 
-    ArrayList<Elevator> elevators;
-    ElevatorBackUp elevatorBackUp;
+	private Hospital hospital;
+	private ArrayList<Elevator> elevators;
+	private ElevatorBackUp elevatorBackUp;
     private Map<Integer, Boolean> externalRequestedFloors;
-    ElevatorBreaker elevatorBreaker;
-    ArrayList<JarvisRemoteControl> remotes;
+    private ElevatorBreaker elevatorBreaker;
+    private ArrayList<JarvisRemoteControl> remotes;
     private final AtomicInteger movesCounter = new AtomicInteger(0);
 
     public void initElevators() {
@@ -45,8 +47,9 @@ public class JarvisSystem {
         }
     }
 
-    public JarvisSystem() {
+    public JarvisSystem(Hospital hospital) {
     	if (Configuration.LOGGING_ON) logger.info("initializing jarvis");
+    	this.hospital = hospital;
     	this.initRequestedFloors();
     	this.initElevators();
         this.remotes = new ArrayList<>(Configuration.HOSPITAL_FLOOR_MAX + 1);
@@ -79,30 +82,30 @@ public class JarvisSystem {
     			buttonPulsed = YES_STR;
     		}
     		
-    		for (Elevator elevator : this.elevators) {
-                if (elevator.currentFloor == nFloor) {
+    		for (Elevator elevator: elevators) {
+                if (elevator.getCurrentFloor() == nFloor) {
                 	ArrayList<String> peopleInElevator = new ArrayList<>();
-                	for (Person person: elevator.space) {
+                	for (Person person: elevator.getSpace()) {
                 		peopleInElevator.add(person.toString());
                 	}
-                	String elevatorDirection = elevator.direction.name();
-                	if (elevator.status == ElevatorStatus.BROKEN) {
-                		elevatorDirection = "KO";
+                	String elevatorDirection = elevator.getDirection().name();
+                	if (elevator.getStatus() == ElevatorStatus.BROKEN) {
+                		elevatorDirection = KO_STR;
                 	}
                 	String elevatorString = elevatorDirection + "#" + elevator.peopleInElevator();
-                	if (elevator.identification.equals("elevator_0")) {
+                	if (elevator.getIdentification().equals("elevator_0")) {
                 		elevator0 = elevatorString;
                 		destinationElevator0 = peopleInElevator.toString();
-                	} else if (elevator.identification.equals("elevator_1")) {
+                	} else if (elevator.getIdentification().equals("elevator_1")) {
                 		elevator1 = elevatorString;
                 		destinationElevator1 = peopleInElevator.toString();
                 	}
                 }
             }
             
-    		if (this.elevatorBackUp.currentFloor == nFloor) {
-	    		String elevatorBackUpDirection = this.elevatorBackUp.direction.name();
-	            String elevatorBackUpString = elevatorBackUpDirection + "#" + this.elevatorBackUp.peopleInElevator();
+    		if (elevatorBackUp.getCurrentFloor() == nFloor) {
+	    		String elevatorBackUpDirection = elevatorBackUp.getDirection().name();
+	            String elevatorBackUpString = elevatorBackUpDirection + "#" + elevatorBackUp.peopleInElevator();
 	            elevator2 = elevatorBackUpString;
 	            ArrayList<String> peopleInElevatorBackUp = new ArrayList<>();
 	    		destinationElevator2 = peopleInElevatorBackUp.toString();
@@ -113,14 +116,14 @@ public class JarvisSystem {
         	
         	nFloor--;
     	}
-    	System.out.println("\n\n--------------------------------- " + "MOVEMENT " + this.getMovesCounter() + " ----------------------------------------\n\n");
+    	System.out.println("\n\n--------------------------------- " + "MOVEMENT " + getMovesCounter() + " ----------------------------------------\n\n");
     }
     
     public boolean isRemoteControlPulsed(int n) {
     	boolean pulsed = false;
-    	for (JarvisRemoteControl remote: this.remotes) {
-    		if (remote.value == n) {
-    			pulsed = remote.active;
+    	for (JarvisRemoteControl remote: remotes) {
+    		if (remote.getValue() == n) {
+    			pulsed = remote.isActive();
     			break;
     		}
     	}
@@ -137,7 +140,7 @@ public class JarvisSystem {
             int newValue = existingValue + 1;
             if (movesCounter.compareAndSet(existingValue, newValue)) {
             	if (getMovesCounter() == Configuration.ELEVATORS_MAX_MOVES) {
-            		this.turnSytemOff();
+            		turnSytemOff();
             	}
             	
                 return;
@@ -146,7 +149,7 @@ public class JarvisSystem {
     }
     
     public void turnSytemOff() {
-    	for (Elevator elevator : this.elevators) {
+    	for (Elevator elevator: elevators) {
     		elevator.turnEnd();
     	}
     	elevatorBackUp.turnEnd();
@@ -154,7 +157,7 @@ public class JarvisSystem {
 
     public void callElevator(int floor) {
     	if (Configuration.LOGGING_ON) logger.info("called elevator from floor " + floor);
-        this.getExternalRequestedFloors().put(floor, true);
+        externalRequestedFloors.put(floor, true);
 
     }
 
@@ -162,20 +165,20 @@ public class JarvisSystem {
         for (int i = Configuration.HOSPITAL_FLOOR_MIN; i <= Configuration.HOSPITAL_FLOOR_MAX; i++) {
             boolean restoreRequested = requestedFloors.get(i);
             if (restoreRequested) {
-                getExternalRequestedFloors().put(i, restoreRequested);
+            	externalRequestedFloors.put(i, restoreRequested);
             }
         }
     }
 
     public ArrayList<Elevator> getElevatorsInFloor(int floor) {
         ArrayList<Elevator> elevatorsInFloor = new ArrayList<>();
-        for (Elevator elevator : this.elevators) {
-            if (elevator.currentFloor == floor && elevator.status != ElevatorStatus.BROKEN) {
+        for (Elevator elevator: elevators) {
+            if (elevator.getCurrentFloor() == floor && elevator.getStatus() != ElevatorStatus.BROKEN) {
             	elevatorsInFloor.add(elevator);
             }
         }
-        if (this.elevatorBackUp.currentFloor == floor && this.elevatorBackUp.status != ElevatorStatus.OFF) {
-        	elevatorsInFloor.add(this.elevatorBackUp);
+        if (elevatorBackUp.getCurrentFloor() == floor && elevatorBackUp.getStatus() != ElevatorStatus.OFF) {
+        	elevatorsInFloor.add(elevatorBackUp);
         }
         
         return elevatorsInFloor;
@@ -200,9 +203,9 @@ public class JarvisSystem {
         }
 
         while (i != stop) {
-            boolean isRequested = this.externalRequestedFloors.get(i);
+            boolean isRequested = externalRequestedFloors.get(i);
             requestedFloors.put(i, isRequested);
-            this.externalRequestedFloors.put(i, false);
+            externalRequestedFloors.put(i, false);
             i += step;
         }
         return requestedFloors;
@@ -213,19 +216,15 @@ public class JarvisSystem {
         return externalRequestedFloors;
     }
 
-    public void setExternalRequestedFloors(Map<Integer, Boolean> externalRequestedFloors) {
-        this.externalRequestedFloors = externalRequestedFloors;
-    }
-
 	public void configureRemote(JarvisRemoteControl remote) {
 		remotes.add(remote);
 		if (Configuration.LOGGING_ON) logger.info("added new remote controller " + remote.toString());
 		
 	}
 
-	public void notifyFloorStop(int floor) {
-		for (JarvisRemoteControl remote: this.remotes) {
-			if (remote.value == floor) {
+	public void notifyFloorStop(int nFloor) {
+		for (JarvisRemoteControl remote: remotes) {
+			if (remote.getValue() == nFloor) {
 				remote.notifyElevatorArriving();
 			}
 		}
@@ -233,7 +232,7 @@ public class JarvisSystem {
 
 	public void notifyFloorMove(int floor) {
 		for (JarvisRemoteControl remote: this.remotes) {
-			if (remote.value == floor) {
+			if (remote.getValue() == floor) {
 				remote.notifyElevatorLeaving();
 			}
 		}
@@ -243,49 +242,15 @@ public class JarvisSystem {
 
 	public synchronized  void notifyElevatorRepaired() {
 		this.elevatorBackUp.turnOff();
-		
 	}
 
 	public void notifyBreak() {
 		this.elevatorBackUp.turnOn();
-		
 	}
 
-	public ArrayList<Elevator> getElevators() {
-		return elevators;
+	public HospitalFloor getHospitalFloor(int nFloor) {
+		return hospital.getFloor(nFloor);
 	}
 
-	public void setElevators(ArrayList<Elevator> elevators) {
-		this.elevators = elevators;
-	}
-
-	public ElevatorBackUp getElevatorBackUp() {
-		return elevatorBackUp;
-	}
-
-	public void setElevatorBackUp(ElevatorBackUp elevatorBackUp) {
-		this.elevatorBackUp = elevatorBackUp;
-	}
-
-	public ElevatorBreaker getElevatorBreaker() {
-		return elevatorBreaker;
-	}
-
-	public void setElevatorBreaker(ElevatorBreaker elevatorBreaker) {
-		this.elevatorBreaker = elevatorBreaker;
-	}
-
-	public ArrayList<JarvisRemoteControl> getRemotes() {
-		return remotes;
-	}
-
-	public void setRemotes(ArrayList<JarvisRemoteControl> remotes) {
-		this.remotes = remotes;
-	}
-
-	public static Logger getLogger() {
-		return logger;
-	}
-	
 
 }

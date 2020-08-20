@@ -1,13 +1,12 @@
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class PeopleGenerator extends Thread {
 	
 	private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 
-    Hospital hospital;
-	int peopleCounter;
+	private Hospital hospital;
+	private int peopleCounter;
     
     public PeopleGenerator(Hospital hospital) {
     	this.hospital = hospital;

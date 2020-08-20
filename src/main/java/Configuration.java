@@ -13,7 +13,7 @@ public class Configuration {
     public static final int ELEVATOR_BROKE_MAX_MS = 30000;
     public static final int ELEVATOR_REPAIR_MIN_MS = 10000;
     public static final int ELEVATOR_REPAIR_MAX_MS = 15000;
-    public static final int ELEVATOR_MOVE_MS = 500;
+    public static final int ELEVATOR_MOVE_MS = 2000;//500;
     public static final boolean LOGGING_ON = false;
 
 }

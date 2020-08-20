@@ -7,9 +7,9 @@ public class ElevatorBreaker extends Thread {
 	
 	private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 
-    List<Elevator> elevators;
-    ElevatorBackUp elevatorBackUp;
-    Random random = new Random();
+    private List<Elevator> elevators;
+    private ElevatorBackUp elevatorBackUp;
+    private Random random = new Random();
 
 
 	public ElevatorBreaker(List<Elevator> elevators, ElevatorBackUp elevatorBackUp) {
@@ -34,9 +34,9 @@ public class ElevatorBreaker extends Thread {
         Elevator elevator;
 
         while (!choosen) {
-            randomNum = this.random.nextInt(this.elevators.size());
-            elevator = this.elevators.get(randomNum);
-            if (elevator.status == ElevatorStatus.STOPPED) {
+            randomNum = random.nextInt(elevators.size());
+            elevator = elevators.get(randomNum);
+            if (elevator.getStatus() == ElevatorStatus.STOPPED) {
                 elevator.broke();
                 choosen = true;
             }
@@ -52,32 +52,4 @@ public class ElevatorBreaker extends Thread {
         }
     }
     
-    public List<Elevator> getElevators() {
-		return elevators;
-	}
-
-	public void setElevators(List<Elevator> elevators) {
-		this.elevators = elevators;
-	}
-
-	public ElevatorBackUp getElevatorBackUp() {
-		return elevatorBackUp;
-	}
-
-	public void setElevatorBackUp(ElevatorBackUp elevatorBackUp) {
-		this.elevatorBackUp = elevatorBackUp;
-	}
-
-	public Random getRandom() {
-		return random;
-	}
-
-	public void setRandom(Random random) {
-		this.random = random;
-	}
-	
-	public static Logger getLogger() {
-		return logger;
-	}
-
 }
