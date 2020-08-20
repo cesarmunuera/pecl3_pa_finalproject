@@ -126,6 +126,7 @@ public class Person extends Thread {
 
 	public synchronized void setFloor(int floor) {
 		this.floor = floor;
+		chooseDirection();
 	}
 
 	public HospitalFloor getHospitalFloor() {

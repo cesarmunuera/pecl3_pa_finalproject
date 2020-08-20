@@ -308,15 +308,19 @@ public class Elevator extends Thread {
 
     @Override
     public void run() {
+    	if (status != ElevatorStatus.OFF) {
+    		stopInFloor();
+    	}
         while (status != ElevatorStatus.END) {
         	
             while (status != ElevatorStatus.OFF) {
-            	stopInFloor();
                 moveToNextFloor();
+                stopInFloor();
                 
+            } 
+            if (peopleInElevator() != 0) {
+            	evacuatePeople();
             }
-            stopInFloor();
-            evacuatePeople();
         }
         evacuatePeople();
     }
