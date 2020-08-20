@@ -10,7 +10,7 @@ public class Hospital {
 	
 
 	public void initFloors() {
-		//logger.info("initializing floors");
+		if (Configuration.LOGGING_ON) logger.info("initializing floors");
 		this.floors = new ArrayList<>();
 		JarvisRemoteControl remote;
 		HospitalFloor floor;
@@ -25,7 +25,7 @@ public class Hospital {
 	public Hospital() {
 		this.initFloors();
 		this.jarvisSystem = new JarvisSystem();
-		//logger.info("initialized with " + this.floors.size() + " floors");
+		if (Configuration.LOGGING_ON) logger.info("initialized with " + this.floors.size() + " floors");
 	}
 
 	public HospitalFloor getFloor(int currentFloor) {

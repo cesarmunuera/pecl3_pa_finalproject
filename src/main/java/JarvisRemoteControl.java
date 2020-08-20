@@ -50,15 +50,15 @@ public class JarvisRemoteControl {
 		if (!this.active) {
 			this.jarvisSystem.callElevator(this.value);
 			this.active = true;
-			//logger.info(this.toString() + " call elevator");
+			if (Configuration.LOGGING_ON) logger.info(this.toString() + " call elevator");
 		} else {
-			//logger.info(this.toString() + " elevator already called ");
+			if (Configuration.LOGGING_ON) logger.info(this.toString() + " elevator already called ");
 		}
 		waitForElevator();
     }
 	
 	public synchronized void notifyElevatorArriving() {
-		//logger.info(this.toString() + " elevator arrives - wake up people waiting");
+		if (Configuration.LOGGING_ON) logger.info(this.toString() + " elevator arrives - wake up people waiting");
 		try {
 			lock.lock();
 			this.elevatorInFloor = true;

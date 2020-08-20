@@ -24,18 +24,12 @@ public class Elevator extends Thread {
 
     }
 
-    @Override
-    public String toString() {
-        return "Elevator(" + this.identification + ", floor = " + this.currentFloor + ", people = " + this.peopleInElevator()
-                + ", " + this.status.name() + ", " + this.direction.name() + ")";
-    }
-
     public void initRequestedFloors() {
         this.requestedFloors = new HashMap<>();
         for (int i = Configuration.HOSPITAL_FLOOR_MIN; i <= Configuration.HOSPITAL_FLOOR_MAX; i++) {
             this.requestedFloors.put(i, false);
         }
-        //logger.info("requested floors initialized");
+        if (Configuration.LOGGING_ON) logger.info("requested floors initialized");
     }
 
     public Elevator(String identification, ElevatorStatus status, JarvisSystem jarvisSystem) {
@@ -47,23 +41,30 @@ public class Elevator extends Thread {
         this.direction = ElevatorDirection.NONE;
         this.initRequestedFloors();
     }
+    
+    @Override
+    public String toString() {
+        return "Elevator(" + this.identification + ", floor = " + this.currentFloor + ", people = " + this.peopleInElevator()
+                + ", " + this.status.name() + ", " + this.direction.name() + ")";
+    }
 
     public void turnOn() {
-    	logger.info(this.toString() + " turning on");
+    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " turning on");
     	this.status = ElevatorStatus.STOPPED;
         this.direction = ElevatorDirection.NONE;
         
     }
 
     public void turnOff() {
+    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " turning off");
         this.status = ElevatorStatus.OFF;
         this.direction = ElevatorDirection.NONE;
         this.evacuatePeople();
-        //logger.info(this.toString() + " turned off");
+        
     }
     
     public void turnEnd() {
-    	logger.info(this.toString() + " turning end");
+    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " turning end");
     	this.status = ElevatorStatus.END;
         this.direction = ElevatorDirection.NONE;
         this.evacuatePeople();
@@ -71,7 +72,7 @@ public class Elevator extends Thread {
     }
 
     public void broke() {
-    	logger.info(this.toString() + " breaking up");
+    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " breaking up");
         this.status = ElevatorStatus.BROKEN;
         this.direction = ElevatorDirection.NONE;
         this.jarvisSystem.notifyBreak();
@@ -79,17 +80,20 @@ public class Elevator extends Thread {
     }
 
     public synchronized void evacuatePeople() {
-        //logger.info(this.toString() + " start evacuating people");
-        for (Person person : this.space) {
+    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " start evacuating people");
+        
+    	for (Person person : this.space) {
             person.floor = this.currentFloor;
             person.interrupt();
         }
-        //logger.info(this.toString() + " evacuated people");
+    	
+        if (Configuration.LOGGING_ON) logger.info(this.toString() + " evacuated people");
     }
 
     public void move() {
         this.status = ElevatorStatus.MOVE;
-        logger.info(this.toString() + " continue moving ");
+        if (Configuration.LOGGING_ON) logger.info(this.toString() + " continue moving ");
+        
         try {
             Thread.sleep((long) Configuration.ELEVATOR_MOVE_MS);
         } catch (InterruptedException e) {
@@ -102,7 +106,8 @@ public class Elevator extends Thread {
             this.previousFloor = this.currentFloor;
             this.currentFloor--;
         }
-        //logger.info(this.toString() + " move to floor " + this.currentFloor);
+        
+        if (Configuration.LOGGING_ON) logger.info(this.toString() + " move to floor " + this.currentFloor);
         this.jarvisSystem.notifyFloorMove(this.currentFloor);
     }
 
@@ -202,7 +207,7 @@ public class Elevator extends Thread {
     }
 
     public void waitInFloor() {
-        //logger.info(this.toString() + " arrived to floor " + this.currentFloor);
+    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " arrived to floor " + this.currentFloor);
         this.status = ElevatorStatus.EXITING;
         try {
             sleep((long) 300);
@@ -225,7 +230,7 @@ public class Elevator extends Thread {
 	        boolean floorInternalRequired = this.requestedFloors.get(this.currentFloor);
 	        boolean floorExternalRequired = this.jarvisSystem.getExternalRequestedFloors().get(this.currentFloor);
 	        if (floorInternalRequired || floorExternalRequired) {
-	            //logger.info(this.toString() + " stopping in floor " + this.currentFloor);
+	        	if (Configuration.LOGGING_ON) logger.info(this.toString() + " stopping in floor " + this.currentFloor);
 	            this.requestedFloors.put(this.currentFloor, false);
 	            this.jarvisSystem.getExternalRequestedFloors().put(this.currentFloor, false);
 	            this.jarvisSystem.notifyFloorStop(this.currentFloor);
@@ -235,7 +240,7 @@ public class Elevator extends Thread {
     }
 
     public void repair() {
-        //logger.info(this.toString() + " starts repairing");
+    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " starts repairing");
         double randomTime = (Math.random() * (Configuration.ELEVATOR_REPAIR_MAX_MS - Configuration.ELEVATOR_REPAIR_MIN_MS + 1)
                 + Configuration.ELEVATOR_REPAIR_MIN_MS);
 
@@ -247,16 +252,16 @@ public class Elevator extends Thread {
         this.initRequestedFloors();
         this.status = ElevatorStatus.STOPPED;
         this.jarvisSystem.notifyElevatorRepaired();
-        //logger.info(this.toString() + " ends repairing");
+        if (Configuration.LOGGING_ON) logger.info(this.toString() + " ends repairing");
     }
 
     public boolean enter(Person person) {
-        //logger.info(this.toString() + " trying enter - " + person.toString());
+    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " trying enter - " + person.toString());
         boolean inside = false;
         inside = this.spaceSemaphore.tryAcquire();
         if (inside) {
             this.space.add(person);
-            //logger.info(this.toString() + " inside - " + person.toString());
+            if (Configuration.LOGGING_ON) logger.info(this.toString() + " inside - " + person.toString());
             this.requestFloor(person.targetFloor);
         }
 
@@ -268,7 +273,7 @@ public class Elevator extends Thread {
     }
 
     public void waitFloor(Person person) {
-        //logger.info(this.toString() + " waiting floor - " + person.toString());
+    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " waiting floor - " + person.toString());
         boolean isInTargetFloor = false;
         try {
             while (!isInTargetFloor) {
@@ -287,7 +292,7 @@ public class Elevator extends Thread {
         person.floor = this.currentFloor;
         this.space.remove(person);
         this.spaceSemaphore.release();
-        //logger.info(this.toString() + " went out - " + person.toString());
+        if (Configuration.LOGGING_ON) logger.info(this.toString() + " went out - " + person.toString());
     }
 
     @Override

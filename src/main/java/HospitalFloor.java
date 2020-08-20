@@ -13,7 +13,7 @@ public class HospitalFloor {
     public HospitalFloor(int floor, JarvisRemoteControl jarvisRemoteControl) {
 		this.floor = floor;
 		this.jarvisRemoteControl = jarvisRemoteControl;
-		//logger.info(this.toString() + " initialized");
+		if (Configuration.LOGGING_ON) logger.info(this.toString() + " initialized");
 	}
     
     @Override

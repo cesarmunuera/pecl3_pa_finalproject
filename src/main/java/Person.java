@@ -31,7 +31,7 @@ public class Person extends Thread {
         this.floor = hospitalFloor.floor;
         this.targetFloor = targetFloor;
         chooseDirection();
-        //logger.info(this.toString() + " initialized");
+        if (Configuration.LOGGING_ON) logger.info(this.toString() + " initialized");
     }
 
     @Override
@@ -55,10 +55,8 @@ public class Person extends Thread {
         Elevator choosenElevator;
 
         while (!(this.floor == this.targetFloor)) {
-            //logger.info(this.toString() + " called elevator and start waiting");
+        	if (Configuration.LOGGING_ON) logger.info(this.toString() + " called elevator and start waiting");
             this.hospitalFloor.callElevator(); // sleep until elevator arrives
-            // TODO: Traer todos los elevadores y hacer un for para cada uno
-            // romper el bucle si entras en uno
             elevators = this.hospitalFloor.getElevators();
             choosenElevator = null;
 
@@ -69,13 +67,13 @@ public class Person extends Thread {
                             choosenElevator = elevator;
                             break;
                         } else {
-                            //logger.info(this.toString() + " elevator wrong direction, wait next one: " + elevator.toString());
+                        	if (Configuration.LOGGING_ON) logger.info(this.toString() + " elevator wrong direction, wait next one: " + elevator.toString());
                         }
                     } else {
-                        //logger.info(this.toString() + " elevator broken, wait next one: " + elevator.toString());
+                    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " elevator broken, wait next one: " + elevator.toString());
                     }
                 } else {
-                    //logger.warning(this.toString() + " not possible to get elevator");
+                	if (Configuration.LOGGING_ON) logger.warning(this.toString() + " not possible to get elevator");
                 }
             }
 
@@ -91,15 +89,15 @@ public class Person extends Thread {
                 // elegir un elevador, y luego entrar en el elegido
                 boolean inside = choosenElevator.enter(this);
                 if (inside) {
-                	//logger.info("Person " + this.identificator + ": enter to elevator");
-                    //logger.info(this.toString() + " enter to elevator");
+                	if (Configuration.LOGGING_ON) logger.info("Person " + this.identificator + ": enter to elevator");
+                	if (Configuration.LOGGING_ON) logger.info(this.toString() + " enter to elevator");
                     choosenElevator.waitFloor(this);
                     choosenElevator.out(this);
-                    //logger.info(this.toString() + " go out to floor " + this.floor);
+                    if (Configuration.LOGGING_ON) logger.info(this.toString() + " go out to floor " + this.floor);
                     if (this.floor == this.targetFloor) {
-                        //logger.info(this.toString() + " is in target floor!");
+                    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " is in target floor!");
                     } else {
-                        //logger.info(this.toString() + " is not in target floor yet");
+                    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " is not in target floor yet");
                     }
                 } else {
                     while (choosenElevator.status == ElevatorStatus.STOPPED) {
@@ -109,7 +107,7 @@ public class Person extends Thread {
                             e.printStackTrace();
                         }
                     }
-                    //logger.info(this.toString() + " elevator full, wait next one");
+                    if (Configuration.LOGGING_ON) logger.info(this.toString() + " elevator full, wait next one");
                 }
 
             } else {
@@ -126,7 +124,7 @@ public class Person extends Thread {
             }
 
         }
-        //logger.info(this.toString() + " ends");
+        if (Configuration.LOGGING_ON) logger.info(this.toString() + " ends");
     }
 
 	public HospitalFloor getHospitalFloor() {

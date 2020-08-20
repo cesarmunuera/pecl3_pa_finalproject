@@ -35,7 +35,7 @@ public class JarvisSystem {
         this.elevatorBackUp.start();
         this.elevatorBreaker = new ElevatorBreaker(this.elevators, this.elevatorBackUp);
         this.elevatorBreaker.start();
-        //logger.info("elevators initialized");
+        if (Configuration.LOGGING_ON) logger.info("elevators initialized");
     }
 
     public void initRequestedFloors() {
@@ -46,11 +46,11 @@ public class JarvisSystem {
     }
 
     public JarvisSystem() {
-    	//logger.info("initializing jarvis");
+    	if (Configuration.LOGGING_ON) logger.info("initializing jarvis");
     	this.initRequestedFloors();
     	this.initElevators();
         this.remotes = new ArrayList<>(Configuration.HOSPITAL_FLOOR_MAX + 1);
-        //logger.info("jarvis initialized!");
+        if (Configuration.LOGGING_ON) logger.info("jarvis initialized!");
     }
     
     public synchronized void printStatus() {
@@ -153,7 +153,7 @@ public class JarvisSystem {
     }
 
     public void callElevator(int floor) {
-    	//logger.info("called elevator from floor " + floor);
+    	if (Configuration.LOGGING_ON) logger.info("called elevator from floor " + floor);
         this.getExternalRequestedFloors().put(floor, true);
 
     }
@@ -178,7 +178,6 @@ public class JarvisSystem {
         	elevatorsInFloor.add(this.elevatorBackUp);
         }
         
-        // TODO: Check ElevatorBackUp
         return elevatorsInFloor;
     }
 
@@ -220,7 +219,7 @@ public class JarvisSystem {
 
 	public void configureRemote(JarvisRemoteControl remote) {
 		remotes.add(remote);
-		//logger.info("added new remote controller " + remote.toString());
+		if (Configuration.LOGGING_ON) logger.info("added new remote controller " + remote.toString());
 		
 	}
 
