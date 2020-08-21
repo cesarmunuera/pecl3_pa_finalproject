@@ -128,7 +128,7 @@ public class Person extends Thread {
                 	try {
                 		waitFloor(choosenElevator);
                 	} catch (InterruptedException e) {
-                    	System.out.println(toString() + " siendo evacuada");
+                    	//System.out.println(toString() + " siendo evacuada");
                 	} finally {
                 		choosenElevator.out(this);
                 	}

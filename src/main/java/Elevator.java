@@ -89,7 +89,7 @@ public class Elevator extends Thread {
     	if (peopleInElevator() > 0) {
     		if (Configuration.LOGGING_ON) logger.info(this.toString() + " start evacuating people");
 	    	for (Person person: this.space) {
-	    		System.out.println(toString() + " : intentando evacuar a " + person.toString());
+	    		//System.out.println(toString() + " : intentando evacuar a " + person.toString());
 	            person.setFloor(this.currentFloor);
 	            person.interrupt();
 	        }
@@ -299,7 +299,7 @@ public class Elevator extends Thread {
 					}
 				} catch (InterruptedException e) {
 					broke();
-					System.out.println(toString() + ": evacuating people");
+					//System.out.println(toString() + ": evacuating people");
 					evacuatePeople();
 					repair();
 				}
