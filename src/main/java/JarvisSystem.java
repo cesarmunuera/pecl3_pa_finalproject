@@ -107,6 +107,9 @@ public class JarvisSystem {
 	            String elevatorBackUpString = elevatorBackUpDirection + "#" + this.elevatorBackUp.peopleInElevator();
 	            elevator2 = elevatorBackUpString;
 	            ArrayList<String> peopleInElevatorBackUp = new ArrayList<>();
+	            for (Person person: elevatorBackUp.getSpace()) {
+	            	peopleInElevatorBackUp.add(person.toString());
+            	}
 	    		destinationElevator2 = peopleInElevatorBackUp.toString();
     		}
     		
