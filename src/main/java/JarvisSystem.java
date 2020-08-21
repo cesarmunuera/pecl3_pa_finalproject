@@ -18,7 +18,7 @@ public class JarvisSystem {
 
     ArrayList<Elevator> elevators;
     ElevatorBackUp elevatorBackUp;
-    private Map<Integer, Boolean> externalRequestedFloors;
+    private ConcurrentHashMap<Integer, Boolean> externalRequestedFloors;
     ElevatorBreaker elevatorBreaker;
     ArrayList<JarvisRemoteControl> remotes;
     private final AtomicInteger movesCounter = new AtomicInteger(0);
@@ -215,10 +215,6 @@ public class JarvisSystem {
         return externalRequestedFloors;
     }
 
-    public void setExternalRequestedFloors(Map<Integer, Boolean> externalRequestedFloors) {
-        this.externalRequestedFloors = externalRequestedFloors;
-    }
-
 	public void configureRemote(JarvisRemoteControl remote) {
 		remotes.add(remote);
 		if (Configuration.LOGGING_ON) logger.info("added new remote controller " + remote.toString());
@@ -226,6 +222,7 @@ public class JarvisSystem {
 	}
 
 	public void notifyFloorStop(int floor) {
+		this.externalRequestedFloors.put(floor, false);
 		for (JarvisRemoteControl remote: this.remotes) {
 			if (remote.value == floor) {
 				remote.notifyElevatorArriving();

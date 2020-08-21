@@ -41,18 +41,70 @@ public class Person extends Thread {
 
     }
     
-    public void waitFloor(Elevator elevator) {
+    public void waitFloor(Elevator elevator) throws InterruptedException {
     	if (Configuration.LOGGING_ON) logger.info(this.toString() + " waiting floor - " + elevator.toString());
         boolean isInTargetFloor = false;
-        try {
-            while (!isInTargetFloor) {
-            	this.floor = elevator.getCurrentFloor();
-                this.hospitalFloor = elevator.getHospitalFloor(this.floor);
-                isInTargetFloor = elevator.currentFloor == this.targetFloor;
-            }
-        } catch (Exception e) {
+        while (!isInTargetFloor) {
+        	this.floor = elevator.getCurrentFloor();
+            this.hospitalFloor = elevator.getHospitalFloor(this.floor);
+            isInTargetFloor = elevator.currentFloor == this.targetFloor;
+            sleep(5);
         }
-
+    }
+    
+    public Elevator chooseElevator(ArrayList<Elevator> elevators) {
+    	 Elevator choosenElevator = null;
+    	 for (Elevator elevator : elevators) {
+             if (elevator != null) {
+                 if (elevator.status != ElevatorStatus.BROKEN && elevator.status != ElevatorStatus.OFF) {
+                     if (elevator.direction == this.direction || elevator.direction == ElevatorDirection.NONE) {
+                         choosenElevator = elevator;
+                         break;
+                     } else {
+                     	if (Configuration.LOGGING_ON) logger.info(this.toString() + " elevator wrong direction, wait next one: " + elevator.toString());
+                     }
+                 } else {
+                 	if (Configuration.LOGGING_ON) logger.info(this.toString() + " elevator broken, wait next one: " + elevator.toString());
+                 }
+             } else {
+             	if (Configuration.LOGGING_ON) logger.warning(this.toString() + " not possible to get elevator");
+             }
+         }
+    	 return choosenElevator;
+    }
+    
+    public void waitExitingPeople(Elevator elevator) {
+    	while (elevator.status != ElevatorStatus.STOPPED) {
+            try {
+				sleep(5);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+    }
+    public void waitElevatorFullLeave(Elevator elevator) {
+    	while (elevator.status == ElevatorStatus.STOPPED) {
+            try {
+				sleep(5);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+    }
+    
+    public void waitAllElevatorsLeave(ArrayList<Elevator> elevators) {
+    	for (Elevator elevator : elevators) {
+            while (this.floor == elevator.currentFloor) {
+            	try {
+    				sleep(5);
+    			} catch (InterruptedException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+            }
+        }
     }
 
     @Override
@@ -62,44 +114,25 @@ public class Person extends Thread {
 
         while (!(this.floor == this.targetFloor)) {
         	if (Configuration.LOGGING_ON) logger.info(this.toString() + " called elevator and start waiting");
-            this.hospitalFloor.callElevator(); // sleep until elevator arrives
+            
+        	this.hospitalFloor.callElevator(); // sleep until elevator arrives
             elevators = this.hospitalFloor.getElevators();
-            choosenElevator = null;
-
-            for (Elevator elevator : elevators) {
-                if (elevator != null) {
-                    if (elevator.status != ElevatorStatus.BROKEN && elevator.status != ElevatorStatus.OFF) {
-                        if (elevator.direction == this.direction || elevator.direction == ElevatorDirection.NONE) {
-                            choosenElevator = elevator;
-                            break;
-                        } else {
-                        	if (Configuration.LOGGING_ON) logger.info(this.toString() + " elevator wrong direction, wait next one: " + elevator.toString());
-                        }
-                    } else {
-                    	if (Configuration.LOGGING_ON) logger.info(this.toString() + " elevator broken, wait next one: " + elevator.toString());
-                    }
-                } else {
-                	if (Configuration.LOGGING_ON) logger.warning(this.toString() + " not possible to get elevator");
-                }
-            }
+            choosenElevator = chooseElevator(elevators);
 
             if (choosenElevator != null) {
-                // wait until people exit (status == EXITING)
-                while (choosenElevator.status != ElevatorStatus.STOPPED) {
-                    try {
-                        Thread.sleep(5);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                // elegir un elevador, y luego entrar en el elegido
+            	waitExitingPeople(choosenElevator);
                 boolean inside = choosenElevator.enter(this);
                 if (inside) {
                 	if (Configuration.LOGGING_ON) logger.info("Person " + this.identificator + ": enter to elevator");
                 	if (Configuration.LOGGING_ON) logger.info(this.toString() + " enter to elevator");
-                    //choosenElevator.waitFloor(this);
-                	waitFloor(choosenElevator);
-                    choosenElevator.out(this);
+                	try {
+                		waitFloor(choosenElevator);
+                	} catch (InterruptedException e) {
+                    	System.out.println(toString() + " siendo evacuada");
+                	} finally {
+                		choosenElevator.out(this);
+                	}
+                    
                     if (Configuration.LOGGING_ON) logger.info(this.toString() + " go out to floor " + this.floor);
                     if (this.floor == this.targetFloor) {
                     	if (Configuration.LOGGING_ON) logger.info(this.toString() + " is in target floor!");
@@ -107,27 +140,12 @@ public class Person extends Thread {
                     	if (Configuration.LOGGING_ON) logger.info(this.toString() + " is not in target floor yet");
                     }
                 } else {
-                    while (choosenElevator.status == ElevatorStatus.STOPPED) {
-                        try {
-                            Thread.sleep(5);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                	waitElevatorFullLeave(choosenElevator);
                     if (Configuration.LOGGING_ON) logger.info(this.toString() + " elevator full, wait next one");
                 }
 
             } else {
-                // wait until all elevators leave floor
-                for (Elevator elevator : elevators) {
-                    while (this.floor == elevator.currentFloor) {
-                        try {
-                            Thread.sleep(5);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
+            	waitAllElevatorsLeave(elevators);
             }
 
         }
