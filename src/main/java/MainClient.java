@@ -1,7 +1,7 @@
 import java.rmi.*;
 import static java.lang.Thread.sleep;
 
-public class Client
+public class MainClient
 {
     public static void main(String args[])
     {

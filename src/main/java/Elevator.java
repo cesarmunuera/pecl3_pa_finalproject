@@ -12,7 +12,7 @@ public class Elevator extends Thread {
     private static final int STOPPED_MS = 500;
 
     String identification;
-	int currentFloor;
+    int currentFloor;
     int previousFloor;
     Semaphore spaceSemaphore;
     JarvisSystem jarvisSystem;
