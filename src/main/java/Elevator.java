@@ -56,6 +56,7 @@ public class Elevator extends Thread {
     	if (Configuration.LOGGING_ON) logger.info(this.toString() + " turning on");
     	this.status = ElevatorStatus.STOPPED;
         this.direction = ElevatorDirection.NONE;
+        System.out.println(this.toString() + " turning on");
         
     }
 
@@ -77,6 +78,7 @@ public class Elevator extends Thread {
 
     public void broke() {
     	if (Configuration.LOGGING_ON) logger.info(this.toString() + " breaking up");
+    	System.out.println(this.toString() + " breaking up");
         this.status = ElevatorStatus.BROKEN;
         this.direction = ElevatorDirection.NONE;
         this.jarvisSystem.notifyBreak();
@@ -163,69 +165,69 @@ public class Elevator extends Thread {
     }
 
     public void moveToNextFloor() throws InterruptedException {
-        boolean internalUpperRequestedFloors = remainingRequestedUpperFloors();
-        boolean externalUpperRequestedFloors = remainingExternalRequestedUpperFloors();
-        boolean internalLowerRequestedFloors = remainingRequestedLowerFloors();
-        boolean externalLowerRequestedFloors = remaininExternalRequestedLowerFloors();
-        boolean move = false;
-
-        if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MIN) {
-            this.direction = ElevatorDirection.UP;
-
-        } else if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MAX) {
-            this.direction = ElevatorDirection.DOWN;
-
-        }
-
-        if (this.direction == ElevatorDirection.UP) {
-            if (internalUpperRequestedFloors || externalUpperRequestedFloors) {
-                move = true;
-            } else {
-                this.direction = ElevatorDirection.NONE;
-            }
-        }
-        if (this.direction == ElevatorDirection.DOWN) {
-            if (internalLowerRequestedFloors || externalLowerRequestedFloors) {
-                move = true;
-            } else {
-                this.direction = ElevatorDirection.NONE;
-            }
-        }
-        if (this.direction == ElevatorDirection.NONE) {
-            if (internalUpperRequestedFloors || externalUpperRequestedFloors) {
-                this.direction = ElevatorDirection.UP;
-                move = true;
-            } else {
-                if (internalLowerRequestedFloors || externalLowerRequestedFloors) {
-                    this.direction = ElevatorDirection.DOWN;
-                    move = true;
-                }
-            }
-        }
-
-        if (move) {
-            this.move();
-        }
-        
-        if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MAX) {
-        	this.direction = ElevatorDirection.NONE;
-        } else if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MIN) {
-        	this.direction = ElevatorDirection.NONE;
-        }
+    	if (this.status != ElevatorStatus.OFF) {
+	        boolean internalUpperRequestedFloors = remainingRequestedUpperFloors();
+	        boolean externalUpperRequestedFloors = remainingExternalRequestedUpperFloors();
+	        boolean internalLowerRequestedFloors = remainingRequestedLowerFloors();
+	        boolean externalLowerRequestedFloors = remaininExternalRequestedLowerFloors();
+	        boolean move = false;
+	
+	        if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MIN) {
+	            this.direction = ElevatorDirection.UP;
+	
+	        } else if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MAX) {
+	            this.direction = ElevatorDirection.DOWN;
+	
+	        }
+	
+	        if (this.direction == ElevatorDirection.UP) {
+	            if (internalUpperRequestedFloors || externalUpperRequestedFloors) {
+	                move = true;
+	            } else {
+	                this.direction = ElevatorDirection.NONE;
+	            }
+	        }
+	        if (this.direction == ElevatorDirection.DOWN) {
+	            if (internalLowerRequestedFloors || externalLowerRequestedFloors) {
+	                move = true;
+	            } else {
+	                this.direction = ElevatorDirection.NONE;
+	            }
+	        }
+	        if (this.direction == ElevatorDirection.NONE) {
+	            if (internalUpperRequestedFloors || externalUpperRequestedFloors) {
+	                this.direction = ElevatorDirection.UP;
+	                move = true;
+	            } else {
+	                if (internalLowerRequestedFloors || externalLowerRequestedFloors) {
+	                    this.direction = ElevatorDirection.DOWN;
+	                    move = true;
+	                }
+	            }
+	        }
+	
+	        if (move) {
+	            this.move();
+	        }
+	        
+	        if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MAX) {
+	        	this.direction = ElevatorDirection.NONE;
+	        } else if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MIN) {
+	        	this.direction = ElevatorDirection.NONE;
+	        }
+    	}
     }
 
     public void waitInFloor() throws InterruptedException {
     	if (Configuration.LOGGING_ON) logger.info(this.toString() + " arrived to floor " + this.currentFloor);
     	 this.status = ElevatorStatus.EXITING;
+    	 sleep((long) EXITING_MS);
          this.status = ElevatorStatus.STOPPED;
          sleep((long) STOPPED_MS);
     }
     
     public void stopInFloor() throws InterruptedException {
-        if (this.status == ElevatorStatus.BROKEN) {
-//            this.evacuatePeople();
-//            this.repair();
-        } else {
+    	if (this.status != ElevatorStatus.OFF) {
 	        boolean floorInternalRequired = this.requestedFloors.get(this.currentFloor);
 	        boolean floorExternalRequired = this.jarvisSystem.getExternalRequestedFloors().get(this.currentFloor);
 	        if (floorInternalRequired || floorExternalRequired) {
@@ -291,16 +293,23 @@ public class Elevator extends Thread {
         while (this.status != ElevatorStatus.END) {
             while (this.status != ElevatorStatus.OFF) {
                 try {
-					moveToNextFloor();
-					stopInFloor();
+                	moveToNextFloor();
+					if (this.status != ElevatorStatus.OFF) {
+						stopInFloor();
+					}
 				} catch (InterruptedException e) {
+					broke();
 					System.out.println(toString() + ": evacuating people");
 					evacuatePeople();
 					repair();
 				}
                 
             }
-            
+            try {
+				sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
         }
         evacuatePeople();
     }

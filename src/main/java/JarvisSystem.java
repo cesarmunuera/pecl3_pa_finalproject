@@ -246,6 +246,7 @@ public class JarvisSystem {
 	}
 
 	public void notifyBreak() {
+		System.out.println("Jarvis encendiendo el elevador backup");
 		this.elevatorBackUp.turnOn();
 		
 	}

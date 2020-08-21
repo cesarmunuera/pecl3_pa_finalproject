@@ -39,7 +39,6 @@ public class ElevatorBreaker extends Thread {
             System.out.println("Intentando romper elevador " + elevator.toString());
             if (elevator.status == ElevatorStatus.STOPPED) {
             	System.out.println("Rompiendo elevador " + elevator.toString());
-            	elevator.broke();
             	elevator.interrupt();
                 choosen = true;
             }
