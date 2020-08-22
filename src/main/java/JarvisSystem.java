@@ -243,7 +243,7 @@ public class JarvisSystem {
 		printStatus();
 	}
 
-	public synchronized  void notifyElevatorRepaired() {
+	public synchronized void notifyElevatorRepaired() {
 		this.elevatorBackUp.turnOff();
 		
 	}

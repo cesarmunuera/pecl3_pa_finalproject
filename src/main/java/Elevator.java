@@ -62,9 +62,10 @@ public class Elevator extends Thread {
 
     public void turnOff() {
     	if (Configuration.LOGGING_ON) logger.info(this.toString() + " turning off");
+    	
         this.status = ElevatorStatus.OFF;
         this.direction = ElevatorDirection.NONE;
-        this.evacuatePeople();
+        evacuatePeople();
         
     }
     
@@ -283,7 +284,7 @@ public class Elevator extends Thread {
 
     @Override
     public void run() {
-    	if  (this.status != ElevatorStatus.OFF) {
+    	if (this.status != ElevatorStatus.OFF) {
     		try {
 				stopInFloor();
 			} catch (InterruptedException e) {
@@ -294,9 +295,7 @@ public class Elevator extends Thread {
             while (this.status != ElevatorStatus.OFF) {
                 try {
                 	moveToNextFloor();
-					if (this.status != ElevatorStatus.OFF) {
-						stopInFloor();
-					}
+					stopInFloor();
 				} catch (InterruptedException e) {
 					broke();
 					//System.out.println(toString() + ": evacuating people");
