@@ -2,13 +2,10 @@ package hospital.server;
 
 
 import hospital.Hospital;
-import hospital.JarvisSystem;
 import hospital.Logging;
 import hospital.PeopleGenerator;
 
-import java.io.IOException;
 import java.rmi.Naming;
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
