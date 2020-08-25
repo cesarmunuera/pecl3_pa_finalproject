@@ -1,6 +1,10 @@
+package hospital;
+
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
+
+import hospital.exceptions.EvacuateSystemException;
 
 public class Person extends Thread {
 
@@ -13,6 +17,7 @@ public class Person extends Thread {
     int floor;
 	int targetFloor;
     ElevatorDirection direction;
+    boolean evacuating;
 
     public void chooseDirection() {
         if (this.floor < this.targetFloor) {
@@ -30,15 +35,22 @@ public class Person extends Thread {
         this.sourceFloor = hospitalFloor.floor;
         this.floor = hospitalFloor.floor;
         this.targetFloor = targetFloor;
+        this.evacuating = false;
         chooseDirection();
         if (Configuration.LOGGING_ON) logger.info(this.toString() + " initialized");
     }
 
     @Override
     public String toString() {
-        return "Person(" + this.identificator + ", " + this.floor + ", " + this.sourceFloor + "->" + this.targetFloor + ", " + this.direction.name() + ")";
-    	//return this.identificator + "->" + this.targetFloor;
+        //return "Person(" + this.identificator + ", " + this.floor + ", " + this.sourceFloor + "->" + this.targetFloor + ", " + this.direction.name() + ")";
+    	return this.identificator + "->" + this.targetFloor;
 
+    }
+    
+    public void evacuate() {
+    	this.evacuating = true;
+    	this.direction = ElevatorDirection.DOWN;
+    	this.targetFloor = Configuration.HOSPITAL_FLOOR_MIN;
     }
     
     public void waitFloor(Elevator elevator) throws InterruptedException {
@@ -120,6 +132,9 @@ public class Person extends Thread {
             choosenElevator = chooseElevator(elevators);
 
             if (choosenElevator != null) {
+            	if (choosenElevator.isEvacuating()) {
+            		evacuate();
+            	}
             	waitExitingPeople(choosenElevator);
                 boolean inside = choosenElevator.enter(this);
                 if (inside) {

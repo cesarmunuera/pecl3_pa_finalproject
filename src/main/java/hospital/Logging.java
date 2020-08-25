@@ -1,3 +1,5 @@
+package hospital;
+
 
 import java.io.IOException;
 import java.util.logging.FileHandler;
@@ -9,7 +11,7 @@ import java.util.logging.SimpleFormatter;
 public class Logging {
 	
 	public static final String LOG_NAME = "HospitalElevatorSystem";
-	private static final String LOG_FILE = "./hospital-elevator-system.log";
+	private static final String LOG_FILE = "./" + Configuration.LOGGING_FILE_NAME;
 	private static final Logger logger = Logger.getLogger(LOG_NAME);
 	
 	private Logging() {

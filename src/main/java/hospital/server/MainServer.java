@@ -1,4 +1,12 @@
+package hospital.server;
 
+
+import hospital.Hospital;
+import hospital.JarvisSystem;
+import hospital.Logging;
+import hospital.PeopleGenerator;
+
+import java.io.IOException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -6,11 +14,14 @@ import java.rmi.registry.Registry;
 
 public class MainServer {
 
-    public static void main(String[] args) throws RemoteException {
-        Hospital hospital = new Hospital();
-        JarvisSystem jarvisSystem = new JarvisSystem(hospital);
+    public static void main(String[] args) throws Exception {
+    	
         
-        ServerController serverController = new ServerController(jarvisSystem);
+    	Logging.initLogger();
+    	Hospital hospital = new Hospital();
+    	PeopleGenerator peopleGenerator = new PeopleGenerator(hospital);
+        ServerController serverController = new ServerController(hospital.getJarvisSystem());
+        peopleGenerator.start();
         startServer(serverController);
     }
 

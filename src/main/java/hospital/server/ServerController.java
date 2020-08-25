@@ -1,4 +1,7 @@
+package hospital.server;
 
+
+import hospital.JarvisSystem;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -8,7 +11,14 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     public ServerController(JarvisSystem jarvisSystem) throws RemoteException {
         this.jarvisSystem = jarvisSystem;
     }
+        
+    @Override
+    public void getElevatorsInfo() {
+        
+    }
     
-    
-    //Hacer get de los métodos creados en JARVIS para poder exportar al cliente
+    @Override
+    public void evacuateSystem() {
+    	this.jarvisSystem.startEvacuation();
+    }
 }

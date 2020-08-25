@@ -1,3 +1,5 @@
+package hospital;
+
 
 public class ElevatorBackUp extends Elevator {
 
@@ -29,7 +31,7 @@ public class ElevatorBackUp extends Elevator {
 					System.out.println(toString() + ": moved");
 				} catch (InterruptedException e) {
 					System.out.println(toString() + ": stoping");
-					evacuatePeople();
+					forceOutPeople();
 				}
                 
             }
@@ -39,7 +41,7 @@ public class ElevatorBackUp extends Elevator {
 				e.printStackTrace();
 			}
         }
-        evacuatePeople();
+        forceOutPeople();
     }
     
 }

@@ -1,3 +1,5 @@
+package hospital;
+
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,7 +53,7 @@ public class PeopleGenerator extends Thread {
     @Override
     public void run() {
     	if (Configuration.LOGGING_ON) logger.info("starts generating people");
-        while (this.peopleCounter < Configuration.GENERATED_MAX_PEOPLE) {
+        while (this.peopleCounter < Configuration.GENERATED_MAX_PEOPLE && !this.hospital.isEvacuating()) {
             waitForPeopleGeneration();
             generate().start();
             

@@ -1,3 +1,5 @@
+package hospital;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,12 +22,9 @@ public class Elevator extends Thread {
     Map<Integer, Boolean> requestedFloors;
     ElevatorStatus status;
     ElevatorDirection direction;
+    boolean evacuating;
 
-    public int peopleInElevator() {
-        return space.size();
-
-    }
-
+    
     public void initRequestedFloors() {
         this.requestedFloors = new HashMap<>();
         for (int i = Configuration.HOSPITAL_FLOOR_MIN; i <= Configuration.HOSPITAL_FLOOR_MAX; i++) {
@@ -43,6 +42,7 @@ public class Elevator extends Thread {
         this.space = new ArrayList<Person>(Configuration.ELEVATOR_MAX_PEOPLE);
         this.status = status;
         this.direction = ElevatorDirection.NONE;
+        this.evacuating = false;
         this.initRequestedFloors();
     }
     
@@ -50,6 +50,11 @@ public class Elevator extends Thread {
     public String toString() {
         return "Elevator(" + this.identification + ", floor = " + this.currentFloor + ", people = " + this.peopleInElevator()
                 + ", " + this.status.name() + ", " + this.direction.name() + ")";
+    }
+    
+    public int peopleInElevator() {
+        return space.size();
+
     }
 
     public void turnOn() {
@@ -65,7 +70,7 @@ public class Elevator extends Thread {
     	
         this.status = ElevatorStatus.OFF;
         this.direction = ElevatorDirection.NONE;
-        evacuatePeople();
+        forceOutPeople();
         
     }
     
@@ -73,7 +78,7 @@ public class Elevator extends Thread {
     	if (Configuration.LOGGING_ON) logger.info(this.toString() + " turning end");
     	this.status = ElevatorStatus.END;
         this.direction = ElevatorDirection.NONE;
-        this.evacuatePeople();
+        this.forceOutPeople();
         
     }
 
@@ -86,13 +91,24 @@ public class Elevator extends Thread {
         
     }
 
-    public synchronized void evacuatePeople() {
+    public synchronized void forceOutPeople() {
+    	forceOutPeople(false);
+    }
+    
+    public synchronized void forceOutPeople(boolean evacuateSystem) {
+    	if (evacuateSystem) {
+    		this.evacuating = true;
+    	}
     	if (peopleInElevator() > 0) {
     		if (Configuration.LOGGING_ON) logger.info(this.toString() + " start evacuating people");
 	    	for (Person person: this.space) {
 	    		//System.out.println(toString() + " : intentando evacuar a " + person.toString());
 	            person.setFloor(this.currentFloor);
+	            if (this.evacuating) {
+	            	person.evacuate();
+	            }
 	            person.interrupt();
+	            
 	        }
 	    	
 	        if (Configuration.LOGGING_ON) logger.info(this.toString() + " evacuated people");
@@ -236,7 +252,7 @@ public class Elevator extends Thread {
 	            this.jarvisSystem.notifyFloorStop(this.currentFloor);
 	            this.waitInFloor();
 	            this.requestedFloors.put(this.currentFloor, false);
-	            //this.jarvisSystem.getExternalRequestedFloors().put(this.currentFloor, false);
+	            this.jarvisSystem.getExternalRequestedFloors().put(this.currentFloor, false);
 	        }
         }
     }
@@ -299,7 +315,7 @@ public class Elevator extends Thread {
 				} catch (InterruptedException e) {
 					broke();
 					//System.out.println(toString() + ": evacuating people");
-					evacuatePeople();
+					forceOutPeople();
 					repair();
 				}
                 
@@ -310,7 +326,7 @@ public class Elevator extends Thread {
 				e.printStackTrace();
 			}
         }
-        evacuatePeople();
+        forceOutPeople();
     }
     
     public String getIdentification() {
@@ -392,6 +408,15 @@ public class Elevator extends Thread {
 	public HospitalFloor getHospitalFloor(int nFloor) {
 		return this.jarvisSystem.getHospitalFloor(nFloor);
 	}
+
+	public boolean isEvacuating() {
+		return evacuating;
+	}
+
+	public void setEvacuating(boolean evacuating) {
+		this.evacuating = evacuating;
+	}
+	
 	
 
 }

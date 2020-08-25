@@ -1,3 +1,5 @@
+package hospital;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +23,8 @@ public class JarvisSystem {
     private ConcurrentHashMap<Integer, Boolean> externalRequestedFloors;
     ElevatorBreaker elevatorBreaker;
     ArrayList<JarvisRemoteControl> remotes;
-    private final AtomicInteger movesCounter = new AtomicInteger(0);
+    private final AtomicInteger movesCounter;
+    private boolean evacuating;
 
     public void initElevators() {
     	this.elevators = new ArrayList<>(Configuration.JARVIS_N_ELEVATORS);
@@ -52,6 +55,8 @@ public class JarvisSystem {
     	this.initRequestedFloors();
     	this.initElevators();
         this.remotes = new ArrayList<>(Configuration.HOSPITAL_FLOOR_MAX + 1);
+        this.movesCounter = new AtomicInteger(0);
+        this.evacuating = false;
         if (Configuration.LOGGING_ON) logger.info("jarvis initialized!");
     }
     
@@ -155,6 +160,17 @@ public class JarvisSystem {
     		elevator.turnEnd();
     	}
     	elevatorBackUp.turnEnd();
+    }
+    
+    public void startEvacuation() {
+    	if (!this.evacuating) {
+    		this.evacuating = true;
+	    	for (Elevator elevator : this.elevators) {
+	    		elevator.forceOutPeople(true);
+	    	}
+	    	elevatorBackUp.forceOutPeople(true);
+	    	elevatorBackUp.turnEnd();
+    	}
     }
 
     public void callElevator(int floor) {
@@ -293,6 +309,12 @@ public class JarvisSystem {
 	public HospitalFloor getHospitalFloor(int nFloor) {
 		return this.hospital.getFloor(nFloor);
 	}
+
+	public boolean isEvacuating() {
+		return evacuating;
+	}
+	
+	
 	
 
 }

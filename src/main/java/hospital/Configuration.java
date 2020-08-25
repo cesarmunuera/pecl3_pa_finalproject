@@ -1,3 +1,5 @@
+package hospital;
+
 
 public class Configuration {
 
@@ -15,5 +17,6 @@ public class Configuration {
     public static final int ELEVATOR_REPAIR_MAX_MS = 15000;
     public static final int ELEVATOR_MOVE_MS = 500;
     public static final boolean LOGGING_ON = false;
+    public static final String LOGGING_FILE_NAME = "evolucionAscensor.log";
 
 }

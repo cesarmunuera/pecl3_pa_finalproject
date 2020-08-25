@@ -1,8 +1,16 @@
+package hospital.clients;
+
+import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+
 public class Front extends javax.swing.JFrame {
 
+	ClientController controller;
 
-    public Front() {
+    public Front() throws RemoteException, MalformedURLException, NotBoundException {
         initComponents();
+        this.controller = new ClientController();
     }
 
 
@@ -71,6 +79,11 @@ public class Front extends javax.swing.JFrame {
         jButton1.setBackground(new java.awt.Color(255, 0, 51));
         jButton1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jButton1.setText("EVACUATE");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jTextFieldPeopleCounterElevator1.setEditable(false);
 
@@ -186,6 +199,16 @@ public class Front extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        try {
+			this.controller.evacuateSystem();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -214,7 +237,12 @@ public class Front extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Front().setVisible(true);
+                try {
+					new Front().setVisible(true);
+				} catch (RemoteException | MalformedURLException | NotBoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
             }
         });
     }

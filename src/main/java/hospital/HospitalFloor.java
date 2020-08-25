@@ -1,3 +1,5 @@
+package hospital;
+
 import java.util.ArrayList;
 import java.util.logging.Logger;
 

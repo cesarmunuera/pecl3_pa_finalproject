@@ -1,3 +1,5 @@
+package hospital;
+
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -59,5 +61,8 @@ public class Hospital {
 	public static Logger getLogger() {
 		return logger;
 	}
-
+	
+	public boolean isEvacuating() {
+		return this.jarvisSystem.isEvacuating();
+	}
 }

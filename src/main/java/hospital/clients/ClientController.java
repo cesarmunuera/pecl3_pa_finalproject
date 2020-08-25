@@ -1,4 +1,8 @@
+package hospital.clients;
 
+
+import hospital.server.ServerControllerInterfaceRMI;
+import hospital.server.NetworkConfig;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -14,7 +18,12 @@ public class ClientController {
     }
     
     
-    //TODO: CREAR LOS METODOS PARA MOSTRAR EN EL FRONT LOS DATOS
-    //QUE SAQUEMOS DEL SERVER
+    public void getElevatorsInfo() throws RemoteException {
+        
+    }
+    
+    public void evacuateSystem() throws RemoteException {
+        this.controllerRMI.evacuateSystem();
+    }
 
 }
