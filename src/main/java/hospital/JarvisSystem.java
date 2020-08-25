@@ -270,7 +270,7 @@ public class JarvisSystem {
 		
 	}
 
-	public ArrayList<Elevator> getElevators() {
+	public synchronized ArrayList<Elevator> getElevators() {
 		return elevators;
 	}
 

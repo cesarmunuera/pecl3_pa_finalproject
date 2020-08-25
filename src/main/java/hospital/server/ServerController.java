@@ -1,9 +1,15 @@
 package hospital.server;
 
 
+import hospital.Elevator;
 import hospital.JarvisSystem;
+import hospital.dto.ElevatorInfoDTO;
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class ServerController extends UnicastRemoteObject implements ServerControllerInterfaceRMI{
     
@@ -13,8 +19,13 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
         
     @Override
-    public void getElevatorsInfo() {
-        
+    public List<ElevatorInfoDTO> getElevatorsInfo() {
+    	List<ElevatorInfoDTO> elevatorsInfosDto = new ArrayList<>();
+    	for (Elevator elevator: this.jarvisSystem.getElevators()) {
+    		elevatorsInfosDto.add(new ElevatorInfoDTO(elevator));
+    	}
+    	elevatorsInfosDto.add(new ElevatorInfoDTO(this.jarvisSystem.getElevatorBackUp()));
+    	return elevatorsInfosDto;
     }
     
     @Override

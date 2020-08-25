@@ -3,6 +3,9 @@ package hospital.clients;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.List;
+
+import hospital.dto.ElevatorInfoDTO;
 
 public class Front extends javax.swing.JFrame {
 
@@ -209,8 +212,34 @@ public class Front extends javax.swing.JFrame {
 		}
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    void setElevatorsInfo(List<ElevatorInfoDTO> elevatorsInfos) {
+    	for (ElevatorInfoDTO elevatorInfoDto: elevatorsInfos) {
+    		if (elevatorInfoDto.getIdentification().equals("elevator_0")) {
+    			this.jTextFieldFloorElevator1.setText(elevatorInfoDto.getFloorAsString());
+    			this.jTextFieldPeopleCounterElevator1.setText(elevatorInfoDto.getPeopleCounterAsString());
+    			this.jTextFieldDestinationsElevator1.setText(elevatorInfoDto.getPeopleDestinationsAsString());
+    			
+    		} else if (elevatorInfoDto.getIdentification().equals("elevator_1")) {
+    			this.jTextFieldFloorElevator2.setText(elevatorInfoDto.getFloorAsString());
+    			this.jTextFieldPeopleCounterElevator2.setText(elevatorInfoDto.getPeopleCounterAsString());
+    			this.jTextFieldDestinationsElevator2.setText(elevatorInfoDto.getPeopleDestinationsAsString());
+    			
+    			
+    		} else if (elevatorInfoDto.getIdentification().equals("elevator_bkp")) {
+    			this.jTextFieldFloorElevator3.setText(elevatorInfoDto.getFloorAsString());
+    			this.jTextFieldPeopleCounterElevator3.setText(elevatorInfoDto.getPeopleCounterAsString());
+    			this.jTextFieldDestinationsElevator3.setText(elevatorInfoDto.getPeopleDestinationsAsString());
+    			
+    			
+    		}
+    	}
+    }
+    
+    public ClientController getController() {
+		return controller;
+	}
 
-    public static void main(String args[]) {
+	public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

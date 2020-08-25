@@ -2,11 +2,13 @@ package hospital.clients;
 
 
 import hospital.server.ServerControllerInterfaceRMI;
+import hospital.dto.ElevatorInfoDTO;
 import hospital.server.NetworkConfig;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.List;
 
 public class ClientController {
 
@@ -18,8 +20,8 @@ public class ClientController {
     }
     
     
-    public void getElevatorsInfo() throws RemoteException {
-        
+    public List<ElevatorInfoDTO> getElevatorsInfo() throws RemoteException {
+    	return this.controllerRMI.getElevatorsInfo();
     }
     
     public void evacuateSystem() throws RemoteException {
