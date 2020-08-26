@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.List;
 
 public class ClientController {
@@ -28,4 +29,7 @@ public class ClientController {
         this.controllerRMI.evacuateSystem();
     }
 
+    public HashMap<Integer, Integer> getPeopleInFloor() throws RemoteException{
+        return this.controllerRMI.getPeopleInFloor();
+    }
 }

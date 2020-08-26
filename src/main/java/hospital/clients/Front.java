@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 import hospital.dto.ElevatorInfoDTO;
+import java.util.HashMap;
 
 public class Front extends javax.swing.JFrame {
 
@@ -499,6 +500,14 @@ public class Front extends javax.swing.JFrame {
     		}
     	}
     }
+    
+    void setPeopleInFloor(HashMap <Integer, Integer> mapOfPeople){
+        for (int i = 1; i < 21; i++) {
+            mapOfPeople.get(i);
+            
+        } 
+    }
+            
     
     public ClientController getController() {
 		return controller;

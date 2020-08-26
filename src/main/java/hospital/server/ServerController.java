@@ -8,6 +8,7 @@ import hospital.dto.ElevatorInfoDTO;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -29,7 +30,14 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
     }
     
     @Override
+    public HashMap <Integer, Integer> getPeopleInFloor(){
+        return this.jarvisSystem.setPeopleInMap();
+    }
+    
+    @Override
     public void evacuateSystem() {
     	this.jarvisSystem.startEvacuation();
     }
+    
+    
 }
