@@ -10,20 +10,18 @@ public class MainClient {
 
         Front clientUI;
         ClientInfoRefresher infoRefresher;
-		try {
-			clientUI = new Front();
-			infoRefresher = new ClientInfoRefresher(clientUI);
-			infoRefresher.start();
-			java.awt.EventQueue.invokeLater(new Runnable() {
-	            public void run() {
-	                clientUI.setVisible(true);
-	            }
-	        });
-		} catch (RemoteException | MalformedURLException | NotBoundException e) {
-			e.printStackTrace();
-		}
-
-        
+        try {
+            clientUI = new Front();
+            infoRefresher = new ClientInfoRefresher(clientUI);
+            infoRefresher.start();
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    clientUI.setVisible(true);
+                }
+            });
+        } catch (RemoteException | MalformedURLException | NotBoundException e) {
+            e.printStackTrace();
+        }
 
     }
 }

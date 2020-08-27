@@ -1,6 +1,5 @@
 package hospital.server;
 
-
 import hospital.Hospital;
 import hospital.Logging;
 import hospital.PeopleGenerator;
@@ -12,11 +11,10 @@ import java.rmi.registry.Registry;
 public class MainServer {
 
     public static void main(String[] args) throws Exception {
-    	
-        
-    	Logging.initLogger();
-    	Hospital hospital = new Hospital();
-    	PeopleGenerator peopleGenerator = new PeopleGenerator(hospital);
+
+        Logging.initLogger();
+        Hospital hospital = new Hospital();
+        PeopleGenerator peopleGenerator = new PeopleGenerator(hospital);
         ServerController serverController = new ServerController(hospital.getJarvisSystem());
         peopleGenerator.start();
         startServer(serverController);

@@ -1,6 +1,5 @@
 package hospital;
 
-
 public enum ElevatorStatus {
 
     STOPPED,

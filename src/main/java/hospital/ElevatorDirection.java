@@ -1,6 +1,5 @@
 package hospital;
 
-
 public enum ElevatorDirection {
 
     NONE,

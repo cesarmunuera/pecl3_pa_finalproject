@@ -1,6 +1,5 @@
 package hospital;
 
-
 public class Configuration {
 
     public static final int JARVIS_N_ELEVATORS = 2;

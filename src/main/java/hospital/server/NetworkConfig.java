@@ -1,7 +1,5 @@
 package hospital.server;
 
-
-
 public class NetworkConfig {
 
     public static final int PORT = 1099;

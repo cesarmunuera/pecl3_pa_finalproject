@@ -280,13 +280,13 @@ public class JarvisSystem {
     }
 
     public HashMap<Integer, Integer> getPeopleInFloors() {
-    	HashMap<Integer, Integer> mapOfPeopleInFloors = new HashMap<Integer, Integer>();
-    	for (JarvisRemoteControl remote: getRemotes()) {
-    		mapOfPeopleInFloors.put(remote.getValue(), remote.getPeopleWaiting());
-    	}
+        HashMap<Integer, Integer> mapOfPeopleInFloors = new HashMap<Integer, Integer>();
+        for (JarvisRemoteControl remote : getRemotes()) {
+            mapOfPeopleInFloors.put(remote.getValue(), remote.getPeopleWaiting());
+        }
         return mapOfPeopleInFloors;
     }
-            
+
     public synchronized ArrayList<Elevator> getElevators() {
         return elevators;
     }
