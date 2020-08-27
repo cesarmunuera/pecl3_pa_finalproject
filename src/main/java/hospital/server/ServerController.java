@@ -30,7 +30,7 @@ public class ServerController extends UnicastRemoteObject implements ServerContr
 
     @Override
     public HashMap<Integer, Integer> getPeopleInFloors() {
-        return this.jarvisSystem.getPeopleInFloors();
+        return this.jarvisSystem.getPeopleInAllFloors();
     }
 
     @Override

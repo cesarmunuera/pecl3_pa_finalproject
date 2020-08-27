@@ -279,7 +279,7 @@ public class JarvisSystem {
 
     }
 
-    public HashMap<Integer, Integer> getPeopleInFloors() {
+    public HashMap<Integer, Integer> getPeopleInAllFloors() {
         HashMap<Integer, Integer> mapOfPeopleInFloors = new HashMap<Integer, Integer>();
         for (JarvisRemoteControl remote : getRemotes()) {
             mapOfPeopleInFloors.put(remote.getValue(), remote.getPeopleWaiting());

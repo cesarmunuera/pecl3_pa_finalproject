@@ -118,7 +118,6 @@ public class Elevator extends Thread {
                     person.evacuate();
                 }
                 person.interrupt();
-
             }
 
             if (Configuration.LOGGING_ON) {
