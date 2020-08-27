@@ -24,7 +24,6 @@ public class JarvisSystem {
     ArrayList<JarvisRemoteControl> remotes;
     private final AtomicInteger movesCounter;
     private boolean evacuating;
-    private HashMap<Integer, Integer> mapOfPeopleInFloors = new HashMap<Integer, Integer>();
 
     public void initElevators() {
         this.elevators = new ArrayList<>(Configuration.JARVIS_N_ELEVATORS);
@@ -280,17 +279,14 @@ public class JarvisSystem {
 
     }
 
-                        public HashMap<Integer, Integer> setPeopleInMap() {
-                            HospitalFloor hospitalFloor;
-
-                            for (int i = 1; i < 21; i++) {
-                                hospitalFloor = this.getHospitalFloor(i);
-                                //mapOfPeopleInFloors.put(i, floor.peopleInFloor);
-                            }
-                            return mapOfPeopleInFloors;
-                        }
+    public HashMap<Integer, Integer> getPeopleInFloors() {
+    	HashMap<Integer, Integer> mapOfPeopleInFloors = new HashMap<Integer, Integer>();
+    	for (JarvisRemoteControl remote: getRemotes()) {
+    		mapOfPeopleInFloors.put(remote.getValue(), remote.getPeopleWaiting());
+    	}
+        return mapOfPeopleInFloors;
+    }
             
-
     public synchronized ArrayList<Elevator> getElevators() {
         return elevators;
     }
@@ -315,7 +311,7 @@ public class JarvisSystem {
         this.elevatorBreaker = elevatorBreaker;
     }
 
-    public ArrayList<JarvisRemoteControl> getRemotes() {
+    public synchronized ArrayList<JarvisRemoteControl> getRemotes() {
         return remotes;
     }
 

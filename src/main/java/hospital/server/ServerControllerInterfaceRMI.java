@@ -15,6 +15,6 @@ public interface ServerControllerInterfaceRMI extends Remote {
     
     public void evacuateSystem() throws RemoteException;
     
-    public HashMap <Integer, Integer> getPeopleInFloor() throws RemoteException;
+    public HashMap <Integer, Integer> getPeopleInFloors() throws RemoteException;
 
 }

@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
 
 import hospital.dto.ElevatorInfoDTO;
 import java.util.HashMap;
@@ -61,8 +62,8 @@ public class Front extends javax.swing.JFrame {
         jLabel28 = new javax.swing.JLabel();
         jLabel29 = new javax.swing.JLabel();
         jLabel30 = new javax.swing.JLabel();
-        jTextFieldPeopleFloor2 = new javax.swing.JTextField();
         jTextFieldPeopleFloor1 = new javax.swing.JTextField();
+        jTextFieldPeopleFloor2 = new javax.swing.JTextField();
         jTextFieldPeopleFloor3 = new javax.swing.JTextField();
         jTextFieldPeopleFloor4 = new javax.swing.JTextField();
         jTextFieldPeopleFloor5 = new javax.swing.JTextField();
@@ -501,11 +502,27 @@ public class Front extends javax.swing.JFrame {
     	}
     }
     
-    void setPeopleInFloor(HashMap <Integer, Integer> mapOfPeople){
-        for (int i = 1; i < 21; i++) {
-            mapOfPeople.get(i);
-            
-        } 
+    void setPeopleInFloor(Map <Integer, Integer> mapOfPeople){
+    	this.jTextFieldPeopleFloor1.setText(String.valueOf(mapOfPeople.get(1)));
+    	this.jTextFieldPeopleFloor2.setText(String.valueOf(mapOfPeople.get(2)));
+    	this.jTextFieldPeopleFloor3.setText(String.valueOf(mapOfPeople.get(3)));
+    	this.jTextFieldPeopleFloor4.setText(String.valueOf(mapOfPeople.get(4)));
+    	this.jTextFieldPeopleFloor5.setText(String.valueOf(mapOfPeople.get(5)));
+    	this.jTextFieldPeopleFloor6.setText(String.valueOf(mapOfPeople.get(6)));
+    	this.jTextFieldPeopleFloor7.setText(String.valueOf(mapOfPeople.get(7)));
+    	this.jTextFieldPeopleFloor8.setText(String.valueOf(mapOfPeople.get(8)));
+    	this.jTextField9.setText(String.valueOf(mapOfPeople.get(9)));
+    	this.jTextFieldPeopleFloor10.setText(String.valueOf(mapOfPeople.get(10)));
+    	this.jTextFieldPeopleFloor11.setText(String.valueOf(mapOfPeople.get(11)));
+    	this.jTextFieldPeopleFloor12.setText(String.valueOf(mapOfPeople.get(12)));
+    	this.jTextFieldPeopleFloor13.setText(String.valueOf(mapOfPeople.get(13)));
+    	this.jTextFieldPeopleFloor14.setText(String.valueOf(mapOfPeople.get(14)));
+    	this.jTextFieldPeopleFloor15.setText(String.valueOf(mapOfPeople.get(15)));
+    	this.jTextFieldPeopleFloor16.setText(String.valueOf(mapOfPeople.get(16)));
+    	this.jTextFieldPeopleFloor17.setText(String.valueOf(mapOfPeople.get(17)));
+    	this.jTextFieldPeopleFloor18.setText(String.valueOf(mapOfPeople.get(18)));
+    	this.jTextFieldPeopleFloor19.setText(String.valueOf(mapOfPeople.get(19)));
+    	this.jTextFieldPeopleFloor20.setText(String.valueOf(mapOfPeople.get(20)));
     }
             
     

@@ -16,6 +16,7 @@ public class JarvisRemoteControl {
 	boolean elevatorInFloor;
 	final Lock lock;
 	final Condition elevatorInFloorCondition; 
+	int peopleWaiting;
 	
 	public JarvisRemoteControl(JarvisSystem jarvisSystem, int value) {
 		this.jarvisSystem = jarvisSystem;
@@ -25,6 +26,7 @@ public class JarvisRemoteControl {
 		this.elevatorInFloorCondition = lock.newCondition();
 		this.value = value;
 		this.jarvisSystem.configureRemote(this);
+		this.peopleWaiting = 0;
 		//logger.info(this.toString() + " initialized and configured");
 	}
 	
@@ -36,12 +38,14 @@ public class JarvisRemoteControl {
 	public void waitForElevator() {
 		try {
 			lock.lock();
+			this.peopleWaiting++;
 			while (!elevatorInFloor) {
 				try {
 					elevatorInFloorCondition.await();
 				} catch (Exception e){}
 			}
 			// end waiting - person continues with execution
+			this.peopleWaiting = 0;
 		}
 		finally {
 			lock.unlock();
@@ -56,6 +60,7 @@ public class JarvisRemoteControl {
 		} else {
 			if (Configuration.LOGGING_ON) logger.info(this.toString() + " elevator already called ");
 		}
+		
 		waitForElevator();
     }
 	
@@ -74,6 +79,7 @@ public class JarvisRemoteControl {
 	public void notifyElevatorLeaving() {
 		this.elevatorInFloor = false;
 		this.active = false;
+		this.peopleWaiting = 0;
 		
 	}
 
@@ -123,6 +129,10 @@ public class JarvisRemoteControl {
 
 	public Condition getElevatorInFloorCondition() {
 		return elevatorInFloorCondition;
+	}
+
+	public int getPeopleWaiting() {
+		return peopleWaiting;
 	}
 	
 	

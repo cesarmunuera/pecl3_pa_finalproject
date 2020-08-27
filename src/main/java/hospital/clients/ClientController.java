@@ -10,6 +10,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ClientController {
 
@@ -29,7 +30,7 @@ public class ClientController {
         this.controllerRMI.evacuateSystem();
     }
 
-    public HashMap<Integer, Integer> getPeopleInFloor() throws RemoteException{
-        return this.controllerRMI.getPeopleInFloor();
+    public Map<Integer, Integer> getPeopleInFloor() throws RemoteException{
+        return this.controllerRMI.getPeopleInFloors();
     }
 }
