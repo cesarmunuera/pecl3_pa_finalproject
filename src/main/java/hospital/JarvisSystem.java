@@ -46,7 +46,7 @@ public class JarvisSystem {
     public void initRequestedFloors() {
         this.externalRequestedFloors = new ConcurrentHashMap<>();
         for (int i = Configuration.HOSPITAL_FLOOR_MIN; i <= Configuration.HOSPITAL_FLOOR_MAX; i++) {
-            this.getExternalRequestedFloors().put(i, false);
+            getExternalRequestedFloors().put(i, false);
         }
     }
 
@@ -55,8 +55,8 @@ public class JarvisSystem {
             logger.info("initializing jarvis");
         }
         this.hospital = hospital;
-        this.initRequestedFloors();
-        this.initElevators();
+        initRequestedFloors();
+        initElevators();
         this.remotes = new ArrayList<>(Configuration.HOSPITAL_FLOOR_MAX + 1);
         this.movesCounter = new AtomicInteger(0);
         this.evacuating = false;
@@ -66,6 +66,8 @@ public class JarvisSystem {
     }
 
     public synchronized void printStatus() {
+    	
+    	String statusString = "";
         String floor;
         String elevator0;
         String elevator1;
@@ -75,7 +77,7 @@ public class JarvisSystem {
         String destinationElevator1;
         String destinationElevator2;
 
-        System.out.format(STATUS_FORMAT, "Floor", "Evt.0", "Evt.1", "Evt.2", "B.Pulsed", "Dest.Evt.0", "Dest.Evt.1", "Dest.Evt.2");
+        statusString += String.format(STATUS_FORMAT, "Floor", "Evt.0", "Evt.1", "Evt.2", "B.Pulsed", "Dest.Evt.0", "Dest.Evt.1", "Dest.Evt.2") + "\n";
         int nFloor = Configuration.HOSPITAL_FLOOR_MAX;
         while (nFloor != Configuration.HOSPITAL_FLOOR_MIN - 1) {
             floor = String.valueOf(nFloor);
@@ -123,19 +125,27 @@ public class JarvisSystem {
                 destinationElevator2 = peopleInElevatorBackUp.toString();
             }
 
-            System.out.format(STATUS_FORMAT, floor, elevator0, elevator1, elevator2, buttonPulsed,
+            statusString += String.format(STATUS_FORMAT, floor, elevator0, elevator1, elevator2, buttonPulsed,
                     destinationElevator0, destinationElevator1, destinationElevator2);
 
             nFloor--;
         }
-        System.out.println("\n\n--------------------------------- " + "MOVEMENT " + this.getMovesCounter() + " ----------------------------------------\n\n");
+        
+        statusString += "\n\n--------------------------------- " + "MOVEMENT " + this.getMovesCounter() + " ----------------------------------------\n\n";
+        
+        if (Configuration.LOGGING_ON) {
+            logger.info(statusString);
+        } else {
+        	System.out.println(statusString);
+        }
+        
     }
 
     public boolean isRemoteControlPulsed(int n) {
         boolean pulsed = false;
         for (JarvisRemoteControl remote : this.remotes) {
-            if (remote.value == n) {
-                pulsed = remote.active;
+            if (remote.getValue() == n) {
+                pulsed = remote.isActive();
                 break;
             }
         }
@@ -152,7 +162,7 @@ public class JarvisSystem {
             int newValue = existingValue + 1;
             if (movesCounter.compareAndSet(existingValue, newValue)) {
                 if (getMovesCounter() == Configuration.ELEVATORS_MAX_MOVES) {
-                    this.turnSytemOff();
+                    turnSytemOff();
                 }
 
                 return;
@@ -182,7 +192,7 @@ public class JarvisSystem {
         if (Configuration.LOGGING_ON) {
             logger.info("called elevator from floor " + floor);
         }
-        this.getExternalRequestedFloors().put(floor, true);
+        getExternalRequestedFloors().put(floor, true);
 
     }
 
@@ -264,7 +274,7 @@ public class JarvisSystem {
                 remote.notifyElevatorLeaving();
             }
         }
-        this.addMovement();
+        addMovement();
         printStatus();
     }
 
@@ -274,7 +284,6 @@ public class JarvisSystem {
     }
 
     public void notifyBreak() {
-        //System.out.println("Jarvis encendiendo el elevador backup");
         this.elevatorBackUp.turnOn();
 
     }

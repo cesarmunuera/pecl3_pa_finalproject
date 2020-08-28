@@ -1,6 +1,10 @@
 package hospital;
 
+import java.util.logging.Logger;
+
 public class ElevatorBackUp extends Elevator {
+	
+	private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 
     public ElevatorBackUp(String id, ElevatorStatus status, JarvisSystem jarvisSystem) {
         super(id, status, jarvisSystem);
@@ -27,9 +31,13 @@ public class ElevatorBackUp extends Elevator {
                 try {
                     moveToNextFloor();
                     stopInFloor();
-                    System.out.println(toString() + ": moved");
+                    if (Configuration.LOGGING_ON) {
+                        logger.info(toString() + ": moved");
+                    }
                 } catch (InterruptedException e) {
-                    System.out.println(toString() + ": stoping");
+                	if (Configuration.LOGGING_ON) {
+                        logger.info(toString() + ": stoping");
+                    }
                     forceOutPeople();
                 }
 

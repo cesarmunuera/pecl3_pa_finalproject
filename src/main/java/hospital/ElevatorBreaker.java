@@ -36,9 +36,7 @@ public class ElevatorBreaker extends Thread {
         while (!choosen) {
             randomNum = this.random.nextInt(this.elevators.size());
             elevator = this.elevators.get(randomNum);
-            //System.out.println("Intentando romper elevador " + elevator.toString());
             if (elevator.status == ElevatorStatus.STOPPED) {
-                //System.out.println("Rompiendo elevador " + elevator.toString());
                 elevator.interrupt();
                 choosen = true;
             }
@@ -50,7 +48,6 @@ public class ElevatorBreaker extends Thread {
         while (true) {
             sleepRandomTime();
             brokeRandomElevator();
-
         }
     }
 

@@ -42,7 +42,6 @@ public class Person extends Thread {
 
     @Override
     public String toString() {
-        //return "Person(" + this.identificator + ", " + this.floor + ", " + this.sourceFloor + "->" + this.targetFloor + ", " + this.direction.name() + ")";
         return this.identificator + "->" + this.targetFloor;
 
     }
@@ -98,7 +97,6 @@ public class Person extends Thread {
             try {
                 sleep(5);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -109,7 +107,6 @@ public class Person extends Thread {
             try {
                 sleep(5);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -121,7 +118,6 @@ public class Person extends Thread {
                 try {
                     sleep(5);
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -132,12 +128,13 @@ public class Person extends Thread {
     public void run() {
         ArrayList<Elevator> elevators;
         Elevator choosenElevator;
+        
+        if (Configuration.LOGGING_ON) {
+            logger.info(this.toString() + " called elevator and start waiting");
+        }
 
         while (!(this.floor == this.targetFloor)) {
-            if (Configuration.LOGGING_ON) {
-                logger.info(this.toString() + " called elevator and start waiting");
-            }
-
+            
             this.hospitalFloor.callElevator(); // sleep until elevator arrives
             elevators = this.hospitalFloor.getElevators();
             choosenElevator = chooseElevator(elevators);
@@ -158,7 +155,7 @@ public class Person extends Thread {
                     try {
                         waitFloor(choosenElevator);
                     } catch (InterruptedException e) {
-                        //System.out.println(toString() + " siendo evacuada");
+                    	logger.info(toString() + " being evacuating");
                     } finally {
                         choosenElevator.out(this);
                     }

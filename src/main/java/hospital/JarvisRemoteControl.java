@@ -27,7 +27,9 @@ public class JarvisRemoteControl {
         this.value = value;
         this.jarvisSystem.configureRemote(this);
         this.peopleWaiting = 0;
-        //logger.info(this.toString() + " initialized and configured");
+        if (Configuration.LOGGING_ON) {
+        	logger.info(toString() + " initialized and configured");
+        }
     }
 
     @Override
@@ -56,13 +58,6 @@ public class JarvisRemoteControl {
         if (!this.active) {
             this.jarvisSystem.callElevator(this.value);
             this.active = true;
-            if (Configuration.LOGGING_ON) {
-                logger.info(this.toString() + " call elevator");
-            }
-        } else {
-            if (Configuration.LOGGING_ON) {
-                logger.info(this.toString() + " elevator already called ");
-            }
         }
 
         waitForElevator();

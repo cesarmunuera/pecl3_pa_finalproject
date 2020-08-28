@@ -43,7 +43,7 @@ public class Elevator extends Thread {
         this.status = status;
         this.direction = ElevatorDirection.NONE;
         this.evacuating = false;
-        this.initRequestedFloors();
+        initRequestedFloors();
     }
 
     @Override
@@ -63,7 +63,6 @@ public class Elevator extends Thread {
         }
         this.status = ElevatorStatus.STOPPED;
         this.direction = ElevatorDirection.NONE;
-        System.out.println(this.toString() + " turning on");
 
     }
 
@@ -84,7 +83,7 @@ public class Elevator extends Thread {
         }
         this.status = ElevatorStatus.END;
         this.direction = ElevatorDirection.NONE;
-        this.forceOutPeople();
+        forceOutPeople();
 
     }
 
@@ -92,7 +91,6 @@ public class Elevator extends Thread {
         if (Configuration.LOGGING_ON) {
             logger.info(this.toString() + " breaking up");
         }
-        System.out.println(this.toString() + " breaking up");
         this.status = ElevatorStatus.BROKEN;
         this.direction = ElevatorDirection.NONE;
         this.jarvisSystem.notifyBreak();
@@ -112,7 +110,6 @@ public class Elevator extends Thread {
                 logger.info(this.toString() + " start evacuating people");
             }
             for (Person person : this.space) {
-                //System.out.println(toString() + " : intentando evacuar a " + person.toString());
                 person.setFloor(this.currentFloor);
                 if (this.evacuating) {
                     person.evacuate();
@@ -166,7 +163,7 @@ public class Elevator extends Thread {
     public boolean remainingRequestedUpperFloors() {
         boolean remaining = false;
         if (this.currentFloor < Configuration.HOSPITAL_FLOOR_MAX) {
-            remaining = this.checkRemainingRequestedFloors(this.currentFloor + 1, Configuration.HOSPITAL_FLOOR_MAX, this.requestedFloors);
+            remaining = checkRemainingRequestedFloors(this.currentFloor + 1, Configuration.HOSPITAL_FLOOR_MAX, this.requestedFloors);
         }
         return remaining;
 
@@ -175,7 +172,7 @@ public class Elevator extends Thread {
     public boolean remainingExternalRequestedUpperFloors() {
         boolean remaining = false;
         if (this.currentFloor < Configuration.HOSPITAL_FLOOR_MAX) {
-            remaining = this.checkRemainingRequestedFloors(this.currentFloor + 1, Configuration.HOSPITAL_FLOOR_MAX, this.jarvisSystem.getExternalRequestedFloors());
+            remaining = checkRemainingRequestedFloors(this.currentFloor + 1, Configuration.HOSPITAL_FLOOR_MAX, this.jarvisSystem.getExternalRequestedFloors());
         }
         return remaining;
     }
@@ -183,7 +180,7 @@ public class Elevator extends Thread {
     public boolean remainingRequestedLowerFloors() {
         boolean remaining = false;
         if (this.currentFloor > Configuration.HOSPITAL_FLOOR_MIN) {
-            remaining = this.checkRemainingRequestedFloors(this.currentFloor - 1, Configuration.HOSPITAL_FLOOR_MIN, this.requestedFloors);
+            remaining = checkRemainingRequestedFloors(this.currentFloor - 1, Configuration.HOSPITAL_FLOOR_MIN, this.requestedFloors);
         }
         return remaining;
     }
@@ -191,7 +188,7 @@ public class Elevator extends Thread {
     public boolean remaininExternalRequestedLowerFloors() {
         boolean remaining = false;
         if (this.currentFloor > Configuration.HOSPITAL_FLOOR_MIN) {
-            remaining = this.checkRemainingRequestedFloors(this.currentFloor - 1, Configuration.HOSPITAL_FLOOR_MIN, this.jarvisSystem.getExternalRequestedFloors());
+            remaining = checkRemainingRequestedFloors(this.currentFloor - 1, Configuration.HOSPITAL_FLOOR_MIN, this.jarvisSystem.getExternalRequestedFloors());
         }
         return remaining;
     }
@@ -239,7 +236,7 @@ public class Elevator extends Thread {
             }
 
             if (move) {
-                this.move();
+                move();
             }
 
             if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MAX) {
@@ -269,7 +266,7 @@ public class Elevator extends Thread {
                     logger.info(this.toString() + " stopping in floor " + this.currentFloor);
                 }
                 this.jarvisSystem.notifyFloorStop(this.currentFloor);
-                this.waitInFloor();
+                waitInFloor();
                 this.requestedFloors.put(this.currentFloor, false);
                 this.jarvisSystem.getExternalRequestedFloors().put(this.currentFloor, false);
             }
@@ -288,7 +285,7 @@ public class Elevator extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        this.initRequestedFloors();
+        initRequestedFloors();
         this.status = ElevatorStatus.STOPPED;
         this.jarvisSystem.notifyElevatorRepaired();
         if (Configuration.LOGGING_ON) {
@@ -307,7 +304,7 @@ public class Elevator extends Thread {
             if (Configuration.LOGGING_ON) {
                 logger.info(this.toString() + " inside - " + person.toString());
             }
-            this.requestFloor(person.targetFloor);
+            requestFloor(person.targetFloor);
         }
 
         return inside;
@@ -343,7 +340,6 @@ public class Elevator extends Thread {
                     stopInFloor();
                 } catch (InterruptedException e) {
                     broke();
-                    //System.out.println(toString() + ": evacuating people");
                     forceOutPeople();
                     repair();
                 }

@@ -27,7 +27,7 @@ public class Hospital {
 
     public Hospital() {
         this.jarvisSystem = new JarvisSystem(this);
-        this.initFloors();
+        initFloors();
         if (Configuration.LOGGING_ON) {
             logger.info("initialized with " + this.floors.size() + " floors");
         }
