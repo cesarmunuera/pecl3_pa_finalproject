@@ -3,7 +3,6 @@ package hospital;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-
 public class Person extends Thread {
 
     private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
@@ -128,13 +127,13 @@ public class Person extends Thread {
     public void run() {
         ArrayList<Elevator> elevators;
         Elevator choosenElevator;
-        
+
         if (Configuration.LOGGING_ON) {
             logger.info(this.toString() + " called elevator and start waiting");
         }
 
         while (!(this.floor == this.targetFloor)) {
-            
+
             this.hospitalFloor.callElevator(); // sleep until elevator arrives
             elevators = this.hospitalFloor.getElevators();
             choosenElevator = chooseElevator(elevators);
@@ -155,7 +154,7 @@ public class Person extends Thread {
                     try {
                         waitFloor(choosenElevator);
                     } catch (InterruptedException e) {
-                    	logger.info(toString() + " being evacuating");
+                        logger.info(toString() + " being evacuating");
                     } finally {
                         choosenElevator.out(this);
                     }
