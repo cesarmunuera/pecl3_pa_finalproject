@@ -10,14 +10,14 @@ import hospital.dto.ElevatorInfoDTO;
 
 public class Front extends javax.swing.JFrame {
 
-	private static final long serialVersionUID = 1L;
-	private ClientController controller;
+    private static final long serialVersionUID = 1L;
+    private ClientController controller;
 
     public Front() throws RemoteException, MalformedURLException, NotBoundException {
         initComponents();
         this.controller = new ClientController();
     }
-    
+
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

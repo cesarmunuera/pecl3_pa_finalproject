@@ -9,8 +9,8 @@ import hospital.Person;
 
 public class ElevatorInfoDTO implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	private String identification;
+    private static final long serialVersionUID = 1L;
+    private String identification;
     private int floor;
     private int peopleCounter;
     private List<Integer> peopleDestinations;

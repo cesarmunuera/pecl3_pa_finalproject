@@ -12,8 +12,8 @@ import java.util.List;
 
 public class ServerController extends UnicastRemoteObject implements ServerControllerInterfaceRMI {
 
-	private static final long serialVersionUID = 1L;
-	private JarvisSystem jarvisSystem;
+    private static final long serialVersionUID = 1L;
+    private JarvisSystem jarvisSystem;
 
     public ServerController(JarvisSystem jarvisSystem) throws RemoteException {
         this.jarvisSystem = jarvisSystem;

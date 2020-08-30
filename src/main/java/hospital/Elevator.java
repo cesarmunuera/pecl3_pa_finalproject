@@ -238,8 +238,8 @@ public class Elevator extends Thread {
                 move();
             }
 
-            if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MAX || 
-            		this.currentFloor == Configuration.HOSPITAL_FLOOR_MIN) {
+            if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MAX
+                    || this.currentFloor == Configuration.HOSPITAL_FLOOR_MIN) {
                 this.direction = ElevatorDirection.NONE;
             }
         }

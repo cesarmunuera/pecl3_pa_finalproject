@@ -66,8 +66,8 @@ public class JarvisSystem {
     }
 
     private synchronized void printStatus() {
-    	
-    	String statusString = "";
+
+        String statusString = "";
         String floor;
         String elevator0;
         String elevator1;
@@ -130,15 +130,15 @@ public class JarvisSystem {
 
             nFloor--;
         }
-        
+
         statusString += "\n\n--------------------------------- " + "MOVEMENT " + this.getMovesCounter() + " ----------------------------------------\n\n";
-        
+
         if (Configuration.LOGGING_ON) {
             logger.info(statusString);
         } else {
-        	System.out.println(statusString);
+            System.out.println(statusString);
         }
-        
+
     }
 
     private boolean isRemoteControlPulsed(int n) {
