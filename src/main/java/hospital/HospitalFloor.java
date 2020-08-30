@@ -7,10 +7,10 @@ public class HospitalFloor {
 
     private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 
-    int floor;
-    JarvisRemoteControl jarvisRemoteControl;
-    boolean elevatorInFloor = false;
-    boolean waitingElevator = false;
+    private int floor;
+    private JarvisRemoteControl jarvisRemoteControl;
+    private boolean elevatorInFloor = false;
+    private boolean waitingElevator = false;
 
     public HospitalFloor(int floor, JarvisRemoteControl jarvisRemoteControl) {
         this.floor = floor;

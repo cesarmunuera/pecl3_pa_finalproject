@@ -7,10 +7,10 @@ public class Hospital {
 
     private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 
-    ArrayList<HospitalFloor> floors;
-    JarvisSystem jarvisSystem;
+    private ArrayList<HospitalFloor> floors;
+    private JarvisSystem jarvisSystem;
 
-    public void initFloors() {
+    private void initFloors() {
         if (Configuration.LOGGING_ON) {
             logger.info("initializing floors");
         }
@@ -36,7 +36,7 @@ public class Hospital {
     public HospitalFloor getFloor(int currentFloor) {
         HospitalFloor selectedFloor = null;
         for (HospitalFloor floor : this.floors) {
-            if (floor.floor == currentFloor) {
+            if (floor.getFloor() == currentFloor) {
                 selectedFloor = floor;
                 break;
             }

@@ -10,13 +10,13 @@ public class JarvisRemoteControl {
 
     private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 
-    JarvisSystem jarvisSystem;
-    int value;
-    boolean active; // condition
-    boolean elevatorInFloor;
-    final Lock lock;
-    final Condition elevatorInFloorCondition;
-    int peopleWaiting;
+    private JarvisSystem jarvisSystem;
+    private int value;
+    private boolean active; // condition
+    private boolean elevatorInFloor;
+    private final Lock lock;
+    private final Condition elevatorInFloorCondition;
+    private int peopleWaiting;
 
     public JarvisRemoteControl(JarvisSystem jarvisSystem, int value) {
         this.jarvisSystem = jarvisSystem;
@@ -37,7 +37,7 @@ public class JarvisRemoteControl {
         return "JarvisRemote(" + this.value + ")";
     }
 
-    public void waitForElevator() {
+    private void waitForElevator() {
         try {
             lock.lock();
             this.peopleWaiting++;

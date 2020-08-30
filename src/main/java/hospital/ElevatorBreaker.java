@@ -8,16 +8,16 @@ public class ElevatorBreaker extends Thread {
 
     private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 
-    List<Elevator> elevators;
-    ElevatorBackUp elevatorBackUp;
-    Random random = new Random();
+    private List<Elevator> elevators;
+    private ElevatorBackUp elevatorBackUp;
+    private Random random = new Random();
 
     public ElevatorBreaker(List<Elevator> elevators, ElevatorBackUp elevatorBackUp) {
         this.elevators = elevators;
         this.elevatorBackUp = elevatorBackUp;
     }
 
-    public void sleepRandomTime() {
+    private void sleepRandomTime() {
         double randomTime = (Math.random() * (Configuration.ELEVATOR_BROKE_MAX_MS - Configuration.ELEVATOR_BROKE_MIN_MS + 1)
                 + Configuration.ELEVATOR_BROKE_MIN_MS);
 
@@ -28,7 +28,7 @@ public class ElevatorBreaker extends Thread {
         }
     }
 
-    public void brokeRandomElevator() {
+    private void brokeRandomElevator() {
         boolean choosen = false;
         int randomNum;
         Elevator elevator;

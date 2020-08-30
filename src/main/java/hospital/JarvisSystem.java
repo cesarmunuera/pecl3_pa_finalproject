@@ -17,15 +17,15 @@ public class JarvisSystem {
     private static final String YES_STR = "YES";
     private static final String NO_STR = "no";
 
-    ArrayList<Elevator> elevators;
-    ElevatorBackUp elevatorBackUp;
+    private ArrayList<Elevator> elevators;
+    private ElevatorBackUp elevatorBackUp;
     private ConcurrentHashMap<Integer, Boolean> externalRequestedFloors;
-    ElevatorBreaker elevatorBreaker;
-    ArrayList<JarvisRemoteControl> remotes;
+    private ElevatorBreaker elevatorBreaker;
+    private ArrayList<JarvisRemoteControl> remotes;
     private final AtomicInteger movesCounter;
     private boolean evacuating;
 
-    public void initElevators() {
+    private void initElevators() {
         this.elevators = new ArrayList<>(Configuration.JARVIS_N_ELEVATORS);
 
         Elevator elevator;
@@ -43,7 +43,7 @@ public class JarvisSystem {
         }
     }
 
-    public void initRequestedFloors() {
+    private void initRequestedFloors() {
         this.externalRequestedFloors = new ConcurrentHashMap<>();
         for (int i = Configuration.HOSPITAL_FLOOR_MIN; i <= Configuration.HOSPITAL_FLOOR_MAX; i++) {
             getExternalRequestedFloors().put(i, false);
@@ -65,7 +65,7 @@ public class JarvisSystem {
         }
     }
 
-    public synchronized void printStatus() {
+    private synchronized void printStatus() {
     	
     	String statusString = "";
         String floor;
@@ -94,7 +94,7 @@ public class JarvisSystem {
             }
 
             for (Elevator elevator : this.elevators) {
-                if (elevator.currentFloor == nFloor) {
+                if (elevator.getCurrentFloor() == nFloor) {
                     ArrayList<String> peopleInElevator = new ArrayList<>();
                     for (Person person : elevator.getSpace()) {
                         peopleInElevator.add(person.toString());
@@ -104,17 +104,17 @@ public class JarvisSystem {
                         elevatorDirection = "KO";
                     }
                     String elevatorString = elevatorDirection + "#" + elevator.peopleInElevator();
-                    if (elevator.identification.equals("elevator_0")) {
+                    if (elevator.getIdentification().equals("elevator_0")) {
                         elevator0 = elevatorString;
                         destinationElevator0 = peopleInElevator.toString();
-                    } else if (elevator.identification.equals("elevator_1")) {
+                    } else if (elevator.getIdentification().equals("elevator_1")) {
                         elevator1 = elevatorString;
                         destinationElevator1 = peopleInElevator.toString();
                     }
                 }
             }
 
-            if (this.elevatorBackUp.currentFloor == nFloor) {
+            if (this.elevatorBackUp.getCurrentFloor() == nFloor) {
                 String elevatorBackUpDirection = this.elevatorBackUp.direction.name();
                 String elevatorBackUpString = elevatorBackUpDirection + "#" + this.elevatorBackUp.peopleInElevator();
                 elevator2 = elevatorBackUpString;
@@ -141,7 +141,7 @@ public class JarvisSystem {
         
     }
 
-    public boolean isRemoteControlPulsed(int n) {
+    private boolean isRemoteControlPulsed(int n) {
         boolean pulsed = false;
         for (JarvisRemoteControl remote : this.remotes) {
             if (remote.getValue() == n) {
@@ -156,7 +156,7 @@ public class JarvisSystem {
         return movesCounter.get();
     }
 
-    public void addMovement() {
+    private void addMovement() {
         while (true) {
             int existingValue = getMovesCounter();
             int newValue = existingValue + 1;
@@ -196,56 +196,56 @@ public class JarvisSystem {
 
     }
 
-    public void restoreRequestedFloors(Map<Integer, Boolean> requestedFloors) {
-        for (int i = Configuration.HOSPITAL_FLOOR_MIN; i <= Configuration.HOSPITAL_FLOOR_MAX; i++) {
-            boolean restoreRequested = requestedFloors.get(i);
-            if (restoreRequested) {
-                getExternalRequestedFloors().put(i, restoreRequested);
-            }
-        }
-    }
+//    public void restoreRequestedFloors(Map<Integer, Boolean> requestedFloors) {
+//        for (int i = Configuration.HOSPITAL_FLOOR_MIN; i <= Configuration.HOSPITAL_FLOOR_MAX; i++) {
+//            boolean restoreRequested = requestedFloors.get(i);
+//            if (restoreRequested) {
+//                getExternalRequestedFloors().put(i, restoreRequested);
+//            }
+//        }
+//    }
 
     public ArrayList<Elevator> getElevatorsInFloor(int floor) {
         ArrayList<Elevator> elevatorsInFloor = new ArrayList<>();
         for (Elevator elevator : this.elevators) {
-            if (elevator.currentFloor == floor && elevator.status != ElevatorStatus.BROKEN) {
+            if (elevator.getCurrentFloor() == floor && elevator.status != ElevatorStatus.BROKEN) {
                 elevatorsInFloor.add(elevator);
             }
         }
-        if (this.elevatorBackUp.currentFloor == floor && this.elevatorBackUp.status != ElevatorStatus.OFF) {
+        if (this.elevatorBackUp.getCurrentFloor() == floor && this.elevatorBackUp.status != ElevatorStatus.OFF) {
             elevatorsInFloor.add(this.elevatorBackUp);
         }
 
         return elevatorsInFloor;
     }
 
-    public synchronized HashMap<Integer, Boolean> getExternalRequestedFloors(int currentFloor, ElevatorDirection direction) {
-        HashMap<Integer, Boolean> requestedFloors = new HashMap<Integer, Boolean>();
-        for (int i = Configuration.HOSPITAL_FLOOR_MIN; i <= Configuration.HOSPITAL_FLOOR_MAX; i++) {
-            requestedFloors.put(i, false);
-        }
-        int step;
-        int i = currentFloor;
-        int stop;
-
-        if (direction == ElevatorDirection.DOWN) {
-            step = -1;
-            stop = Configuration.HOSPITAL_FLOOR_MIN;
-        } else {
-            // go up by default if no direction provided
-            step = 1;
-            stop = Configuration.HOSPITAL_FLOOR_MAX;
-        }
-
-        while (i != stop) {
-            boolean isRequested = this.externalRequestedFloors.get(i);
-            requestedFloors.put(i, isRequested);
-            this.externalRequestedFloors.put(i, false);
-            i += step;
-        }
-        return requestedFloors;
-
-    }
+//    public synchronized HashMap<Integer, Boolean> getExternalRequestedFloors(int currentFloor, ElevatorDirection direction) {
+//        HashMap<Integer, Boolean> requestedFloors = new HashMap<Integer, Boolean>();
+//        for (int i = Configuration.HOSPITAL_FLOOR_MIN; i <= Configuration.HOSPITAL_FLOOR_MAX; i++) {
+//            requestedFloors.put(i, false);
+//        }
+//        int step;
+//        int i = currentFloor;
+//        int stop;
+//
+//        if (direction == ElevatorDirection.DOWN) {
+//            step = -1;
+//            stop = Configuration.HOSPITAL_FLOOR_MIN;
+//        } else {
+//            // go up by default if no direction provided
+//            step = 1;
+//            stop = Configuration.HOSPITAL_FLOOR_MAX;
+//        }
+//
+//        while (i != stop) {
+//            boolean isRequested = this.externalRequestedFloors.get(i);
+//            requestedFloors.put(i, isRequested);
+//            this.externalRequestedFloors.put(i, false);
+//            i += step;
+//        }
+//        return requestedFloors;
+//
+//    }
 
     public Map<Integer, Boolean> getExternalRequestedFloors() {
         return externalRequestedFloors;
@@ -262,7 +262,7 @@ public class JarvisSystem {
     public void notifyFloorStop(int floor) {
         this.externalRequestedFloors.put(floor, false);
         for (JarvisRemoteControl remote : this.remotes) {
-            if (remote.value == floor) {
+            if (remote.getValue() == floor) {
                 remote.notifyElevatorArriving();
             }
         }
@@ -270,7 +270,7 @@ public class JarvisSystem {
 
     public void notifyFloorMove(int floor) {
         for (JarvisRemoteControl remote : this.remotes) {
-            if (remote.value == floor) {
+            if (remote.getValue() == floor) {
                 remote.notifyElevatorLeaving();
             }
         }
