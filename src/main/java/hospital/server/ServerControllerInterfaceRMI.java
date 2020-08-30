@@ -3,9 +3,9 @@ package hospital.server;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Map;
 
 import hospital.dto.ElevatorInfoDTO;
-import java.util.HashMap;
 
 public interface ServerControllerInterfaceRMI extends Remote {
 
@@ -13,6 +13,6 @@ public interface ServerControllerInterfaceRMI extends Remote {
 
     public void evacuateSystem() throws RemoteException;
 
-    public HashMap<Integer, Integer> getPeopleInFloors() throws RemoteException;
+    public Map<Integer, Integer> getPeopleInFloors() throws RemoteException;
 
 }

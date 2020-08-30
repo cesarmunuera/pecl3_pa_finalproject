@@ -6,8 +6,8 @@ public class PeopleGenerator extends Thread {
 
     private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 
-    Hospital hospital;
-    int peopleCounter;
+    private Hospital hospital;
+    private int peopleCounter;
 
     public PeopleGenerator(Hospital hospital) {
         this.hospital = hospital;
@@ -36,7 +36,7 @@ public class PeopleGenerator extends Thread {
         }
     }
 
-    public Person generate() {
+    private Person generate() {
 
         String id = idGenerator();
         int currentFloor = randomFloor();
@@ -65,26 +65,6 @@ public class PeopleGenerator extends Thread {
         if (Configuration.LOGGING_ON) {
             logger.info("ends generating people");
         }
-    }
-
-    public Hospital getHospital() {
-        return hospital;
-    }
-
-    public void setHospital(Hospital hospital) {
-        this.hospital = hospital;
-    }
-
-    public int getPeopleCounter() {
-        return peopleCounter;
-    }
-
-    public void setPeopleCounter(int peopleCounter) {
-        this.peopleCounter = peopleCounter;
-    }
-
-    public static Logger getLogger() {
-        return logger;
     }
 
 }

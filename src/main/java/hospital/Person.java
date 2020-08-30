@@ -8,13 +8,12 @@ public class Person extends Thread {
     private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
     public static final String PREFIX = "P";
 
-    HospitalFloor hospitalFloor;
+    private HospitalFloor hospitalFloor;
     private String identificator;
-    int sourceFloor;
-    int floor;
-    int targetFloor;
-    ElevatorDirection direction;
-    boolean evacuating;
+    private int sourceFloor;
+    private int floor;
+    private int targetFloor;
+    private ElevatorDirection direction;
 
     public void chooseDirection() {
         if (this.floor < this.targetFloor) {
@@ -29,10 +28,9 @@ public class Person extends Thread {
     public Person(String identificator, HospitalFloor hospitalFloor, int targetFloor) {
         this.identificator = identificator;
         this.hospitalFloor = hospitalFloor;
-        this.sourceFloor = hospitalFloor.floor;
-        this.floor = hospitalFloor.floor;
+        this.sourceFloor = hospitalFloor.getFloor();
+        this.floor = hospitalFloor.getFloor();
         this.targetFloor = targetFloor;
-        this.evacuating = false;
         chooseDirection();
         if (Configuration.LOGGING_ON) {
             logger.info(this.toString() + " initialized");
@@ -46,12 +44,11 @@ public class Person extends Thread {
     }
 
     public void evacuate() {
-        this.evacuating = true;
         this.direction = ElevatorDirection.DOWN;
         this.targetFloor = Configuration.HOSPITAL_FLOOR_MIN;
     }
 
-    public void waitFloor(Elevator elevator) throws InterruptedException {
+    private void waitFloor(Elevator elevator) throws InterruptedException {
         if (Configuration.LOGGING_ON) {
             logger.info(this.toString() + " waiting floor - " + elevator.toString());
         }
@@ -59,17 +56,17 @@ public class Person extends Thread {
         while (!isInTargetFloor) {
             this.floor = elevator.getCurrentFloor();
             this.hospitalFloor = elevator.getHospitalFloor(this.floor);
-            isInTargetFloor = elevator.currentFloor == this.targetFloor;
+            isInTargetFloor = elevator.getCurrentFloor() == this.targetFloor;
             sleep(5);
         }
     }
 
-    public Elevator chooseElevator(ArrayList<Elevator> elevators) {
+    private Elevator chooseElevator(ArrayList<Elevator> elevators) {
         Elevator choosenElevator = null;
         for (Elevator elevator : elevators) {
             if (elevator != null) {
-                if (elevator.status != ElevatorStatus.BROKEN && elevator.status != ElevatorStatus.OFF) {
-                    if (elevator.direction == this.direction || elevator.direction == ElevatorDirection.NONE) {
+                if (elevator.getStatus() != ElevatorStatus.BROKEN && elevator.getStatus() != ElevatorStatus.OFF) {
+                    if (elevator.getDirection() == this.direction || elevator.getDirection() == ElevatorDirection.NONE) {
                         choosenElevator = elevator;
                         break;
                     } else {
@@ -91,8 +88,8 @@ public class Person extends Thread {
         return choosenElevator;
     }
 
-    public void waitExitingPeople(Elevator elevator) {
-        while (elevator.status != ElevatorStatus.STOPPED) {
+    private void waitExitingPeople(Elevator elevator) {
+        while (elevator.getStatus() != ElevatorStatus.STOPPED) {
             try {
                 sleep(5);
             } catch (InterruptedException e) {
@@ -101,8 +98,8 @@ public class Person extends Thread {
         }
     }
 
-    public void waitElevatorFullLeave(Elevator elevator) {
-        while (elevator.status == ElevatorStatus.STOPPED) {
+    private void waitElevatorFullLeave(Elevator elevator) {
+        while (elevator.getStatus() == ElevatorStatus.STOPPED) {
             try {
                 sleep(5);
             } catch (InterruptedException e) {
@@ -111,9 +108,9 @@ public class Person extends Thread {
         }
     }
 
-    public void waitAllElevatorsLeave(ArrayList<Elevator> elevators) {
+    private void waitAllElevatorsLeave(ArrayList<Elevator> elevators) {
         for (Elevator elevator : elevators) {
-            while (this.floor == elevator.currentFloor) {
+            while (this.floor == elevator.getCurrentFloor()) {
                 try {
                     sleep(5);
                 } catch (InterruptedException e) {
@@ -132,7 +129,7 @@ public class Person extends Thread {
             logger.info(this.toString() + " called elevator and start waiting");
         }
 
-        while (!(this.floor == this.targetFloor)) {
+        while (this.floor != this.targetFloor) {
 
             this.hospitalFloor.callElevator(); // sleep until elevator arrives
             elevators = this.hospitalFloor.getElevators();
@@ -208,36 +205,8 @@ public class Person extends Thread {
         return identificator;
     }
 
-    public void setIdentificator(String identificator) {
-        this.identificator = identificator;
-    }
-
-    public int getSourceFloor() {
-        return sourceFloor;
-    }
-
-    public void setSourceFloor(int sourceFloor) {
-        this.sourceFloor = sourceFloor;
-    }
-
     public int getTargetFloor() {
         return targetFloor;
-    }
-
-    public void setTargetFloor(int targetFloor) {
-        this.targetFloor = targetFloor;
-    }
-
-    public ElevatorDirection getDirection() {
-        return direction;
-    }
-
-    public void setDirection(ElevatorDirection direction) {
-        this.direction = direction;
-    }
-
-    public static Logger getLogger() {
-        return logger;
     }
 
 }
