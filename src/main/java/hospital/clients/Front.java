@@ -7,18 +7,17 @@ import java.util.List;
 import java.util.Map;
 
 import hospital.dto.ElevatorInfoDTO;
-import java.util.HashMap;
 
 public class Front extends javax.swing.JFrame {
 
-    ClientController controller;
+	private static final long serialVersionUID = 1L;
+	private ClientController controller;
 
     public Front() throws RemoteException, MalformedURLException, NotBoundException {
         initComponents();
         this.controller = new ClientController();
     }
-
-    @SuppressWarnings("unchecked")
+    
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

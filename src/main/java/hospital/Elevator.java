@@ -358,76 +358,36 @@ public class Elevator extends Thread {
         return identification;
     }
 
-    public void setIdentification(String id) {
-        this.identification = id;
-    }
-
     public int getCurrentFloor() {
         return currentFloor;
-    }
-
-    public void setCurrentFloor(int currentFloor) {
-        this.currentFloor = currentFloor;
     }
 
     public int getPreviousFloor() {
         return previousFloor;
     }
 
-    public void setPreviousFloor(int previousFloor) {
-        this.previousFloor = previousFloor;
-    }
-
     public Semaphore getSpaceSemaphore() {
         return spaceSemaphore;
-    }
-
-    public void setSpaceSemaphore(Semaphore spaceSemaphore) {
-        this.spaceSemaphore = spaceSemaphore;
     }
 
     public JarvisSystem getJarvisSystem() {
         return jarvisSystem;
     }
 
-    public void setJarvisSystem(JarvisSystem jarvisSystem) {
-        this.jarvisSystem = jarvisSystem;
-    }
-
     public synchronized ArrayList<Person> getSpace() {
         return space;
-    }
-
-    public void setSpace(ArrayList<Person> space) {
-        this.space = space;
     }
 
     public Map<Integer, Boolean> getRequestedFloors() {
         return requestedFloors;
     }
 
-    public void setRequestedFloors(Map<Integer, Boolean> requestedFloors) {
-        this.requestedFloors = requestedFloors;
-    }
-
     public ElevatorStatus getStatus() {
         return status;
     }
 
-    public void setStatus(ElevatorStatus status) {
-        this.status = status;
-    }
-
     public ElevatorDirection getDirection() {
         return direction;
-    }
-
-    public void setDirection(ElevatorDirection direction) {
-        this.direction = direction;
-    }
-
-    public static Logger getLogger() {
-        return logger;
     }
 
     public HospitalFloor getHospitalFloor(int nFloor) {
@@ -436,10 +396,6 @@ public class Elevator extends Thread {
 
     public boolean isEvacuating() {
         return evacuating;
-    }
-
-    public void setEvacuating(boolean evacuating) {
-        this.evacuating = evacuating;
     }
 
 }

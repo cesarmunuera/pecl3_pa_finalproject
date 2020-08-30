@@ -91,40 +91,16 @@ public class JarvisRemoteControl {
         return jarvisSystem;
     }
 
-    public void setJarvisSystem(JarvisSystem jarvisSystem) {
-        this.jarvisSystem = jarvisSystem;
-    }
-
     public int getValue() {
         return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
     }
 
     public boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
     public boolean isElevatorInFloor() {
         return elevatorInFloor;
-    }
-
-    public void setElevatorInFloor(boolean elevatorInFloor) {
-        this.elevatorInFloor = elevatorInFloor;
-    }
-
-    public static Logger getLogger() {
-        return logger;
-    }
-
-    public Lock getLock() {
-        return lock;
     }
 
     public Condition getElevatorInFloorCondition() {

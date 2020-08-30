@@ -196,15 +196,6 @@ public class JarvisSystem {
 
     }
 
-//    public void restoreRequestedFloors(Map<Integer, Boolean> requestedFloors) {
-//        for (int i = Configuration.HOSPITAL_FLOOR_MIN; i <= Configuration.HOSPITAL_FLOOR_MAX; i++) {
-//            boolean restoreRequested = requestedFloors.get(i);
-//            if (restoreRequested) {
-//                getExternalRequestedFloors().put(i, restoreRequested);
-//            }
-//        }
-//    }
-
     public ArrayList<Elevator> getElevatorsInFloor(int floor) {
         ArrayList<Elevator> elevatorsInFloor = new ArrayList<>();
         for (Elevator elevator : this.elevators) {
@@ -218,34 +209,6 @@ public class JarvisSystem {
 
         return elevatorsInFloor;
     }
-
-//    public synchronized HashMap<Integer, Boolean> getExternalRequestedFloors(int currentFloor, ElevatorDirection direction) {
-//        HashMap<Integer, Boolean> requestedFloors = new HashMap<Integer, Boolean>();
-//        for (int i = Configuration.HOSPITAL_FLOOR_MIN; i <= Configuration.HOSPITAL_FLOOR_MAX; i++) {
-//            requestedFloors.put(i, false);
-//        }
-//        int step;
-//        int i = currentFloor;
-//        int stop;
-//
-//        if (direction == ElevatorDirection.DOWN) {
-//            step = -1;
-//            stop = Configuration.HOSPITAL_FLOOR_MIN;
-//        } else {
-//            // go up by default if no direction provided
-//            step = 1;
-//            stop = Configuration.HOSPITAL_FLOOR_MAX;
-//        }
-//
-//        while (i != stop) {
-//            boolean isRequested = this.externalRequestedFloors.get(i);
-//            requestedFloors.put(i, isRequested);
-//            this.externalRequestedFloors.put(i, false);
-//            i += step;
-//        }
-//        return requestedFloors;
-//
-//    }
 
     public Map<Integer, Boolean> getExternalRequestedFloors() {
         return externalRequestedFloors;
@@ -300,36 +263,16 @@ public class JarvisSystem {
         return elevators;
     }
 
-    public void setElevators(ArrayList<Elevator> elevators) {
-        this.elevators = elevators;
-    }
-
     public ElevatorBackUp getElevatorBackUp() {
         return elevatorBackUp;
-    }
-
-    public void setElevatorBackUp(ElevatorBackUp elevatorBackUp) {
-        this.elevatorBackUp = elevatorBackUp;
     }
 
     public ElevatorBreaker getElevatorBreaker() {
         return elevatorBreaker;
     }
 
-    public void setElevatorBreaker(ElevatorBreaker elevatorBreaker) {
-        this.elevatorBreaker = elevatorBreaker;
-    }
-
     public synchronized ArrayList<JarvisRemoteControl> getRemotes() {
         return remotes;
-    }
-
-    public void setRemotes(ArrayList<JarvisRemoteControl> remotes) {
-        this.remotes = remotes;
-    }
-
-    public static Logger getLogger() {
-        return logger;
     }
 
     public HospitalFloor getHospitalFloor(int nFloor) {

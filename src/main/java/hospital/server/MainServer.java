@@ -6,7 +6,6 @@ import hospital.PeopleGenerator;
 
 import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 
 public class MainServer {
 
@@ -20,10 +19,10 @@ public class MainServer {
         startServer(serverController);
     }
 
-    public static void startServer(ServerController controller) {
+    private static void startServer(ServerController controller) {
         try {
             ServerController controllerObj = controller;
-            Registry registry = LocateRegistry.createRegistry(NetworkConfig.PORT);
+            LocateRegistry.createRegistry(NetworkConfig.PORT);
             Naming.rebind(NetworkConfig.SERVER_CONTROLLER_URI, controllerObj);
             System.out.println("Started server");
         } catch (Exception e) {

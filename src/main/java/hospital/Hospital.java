@@ -49,20 +49,8 @@ public class Hospital {
         return floors;
     }
 
-    public void setFloors(ArrayList<HospitalFloor> floors) {
-        this.floors = floors;
-    }
-
     public JarvisSystem getJarvisSystem() {
         return jarvisSystem;
-    }
-
-    public void setJarvisSystem(JarvisSystem jarvisSystem) {
-        this.jarvisSystem = jarvisSystem;
-    }
-
-    public static Logger getLogger() {
-        return logger;
     }
 
     public boolean isEvacuating() {

@@ -205,36 +205,16 @@ public class Person extends Thread {
         return identificator;
     }
 
-    public void setIdentificator(String identificator) {
-        this.identificator = identificator;
-    }
-
     public int getSourceFloor() {
         return sourceFloor;
-    }
-
-    public void setSourceFloor(int sourceFloor) {
-        this.sourceFloor = sourceFloor;
     }
 
     public int getTargetFloor() {
         return targetFloor;
     }
 
-    public void setTargetFloor(int targetFloor) {
-        this.targetFloor = targetFloor;
-    }
-
     public ElevatorDirection getDirection() {
         return direction;
-    }
-
-    public void setDirection(ElevatorDirection direction) {
-        this.direction = direction;
-    }
-
-    public static Logger getLogger() {
-        return logger;
     }
 
 }

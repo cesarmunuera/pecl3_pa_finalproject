@@ -55,28 +55,12 @@ public class ElevatorBreaker extends Thread {
         return elevators;
     }
 
-    public void setElevators(List<Elevator> elevators) {
-        this.elevators = elevators;
-    }
-
     public ElevatorBackUp getElevatorBackUp() {
         return elevatorBackUp;
     }
 
-    public void setElevatorBackUp(ElevatorBackUp elevatorBackUp) {
-        this.elevatorBackUp = elevatorBackUp;
-    }
-
     public Random getRandom() {
         return random;
-    }
-
-    public void setRandom(Random random) {
-        this.random = random;
-    }
-
-    public static Logger getLogger() {
-        return logger;
     }
 
 }

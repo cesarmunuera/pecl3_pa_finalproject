@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class ClientController {
 
-    ServerControllerInterfaceRMI controllerRMI;
+    private ServerControllerInterfaceRMI controllerRMI;
 
     public ClientController() throws RemoteException, NotBoundException, MalformedURLException {
 
