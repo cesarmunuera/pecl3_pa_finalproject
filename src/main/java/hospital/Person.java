@@ -65,8 +65,8 @@ public class Person extends Thread {
         Elevator choosenElevator = null;
         for (Elevator elevator : elevators) {
             if (elevator != null) {
-                if (elevator.status != ElevatorStatus.BROKEN && elevator.status != ElevatorStatus.OFF) {
-                    if (elevator.direction == this.direction || elevator.direction == ElevatorDirection.NONE) {
+                if (elevator.getStatus() != ElevatorStatus.BROKEN && elevator.getStatus() != ElevatorStatus.OFF) {
+                    if (elevator.getDirection() == this.direction || elevator.getDirection() == ElevatorDirection.NONE) {
                         choosenElevator = elevator;
                         break;
                     } else {
@@ -89,7 +89,7 @@ public class Person extends Thread {
     }
 
     private void waitExitingPeople(Elevator elevator) {
-        while (elevator.status != ElevatorStatus.STOPPED) {
+        while (elevator.getStatus() != ElevatorStatus.STOPPED) {
             try {
                 sleep(5);
             } catch (InterruptedException e) {
@@ -99,7 +99,7 @@ public class Person extends Thread {
     }
 
     private void waitElevatorFullLeave(Elevator elevator) {
-        while (elevator.status == ElevatorStatus.STOPPED) {
+        while (elevator.getStatus() == ElevatorStatus.STOPPED) {
             try {
                 sleep(5);
             } catch (InterruptedException e) {
@@ -205,16 +205,8 @@ public class Person extends Thread {
         return identificator;
     }
 
-    public int getSourceFloor() {
-        return sourceFloor;
-    }
-
     public int getTargetFloor() {
         return targetFloor;
-    }
-
-    public ElevatorDirection getDirection() {
-        return direction;
     }
 
 }

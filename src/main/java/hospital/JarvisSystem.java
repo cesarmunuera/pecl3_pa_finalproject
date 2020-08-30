@@ -99,8 +99,8 @@ public class JarvisSystem {
                     for (Person person : elevator.getSpace()) {
                         peopleInElevator.add(person.toString());
                     }
-                    String elevatorDirection = elevator.direction.name();
-                    if (elevator.status == ElevatorStatus.BROKEN) {
+                    String elevatorDirection = elevator.getDirection().name();
+                    if (elevator.getStatus() == ElevatorStatus.BROKEN) {
                         elevatorDirection = "KO";
                     }
                     String elevatorString = elevatorDirection + "#" + elevator.peopleInElevator();
@@ -115,7 +115,7 @@ public class JarvisSystem {
             }
 
             if (this.elevatorBackUp.getCurrentFloor() == nFloor) {
-                String elevatorBackUpDirection = this.elevatorBackUp.direction.name();
+                String elevatorBackUpDirection = this.elevatorBackUp.getDirection().name();
                 String elevatorBackUpString = elevatorBackUpDirection + "#" + this.elevatorBackUp.peopleInElevator();
                 elevator2 = elevatorBackUpString;
                 ArrayList<String> peopleInElevatorBackUp = new ArrayList<>();
@@ -199,11 +199,11 @@ public class JarvisSystem {
     public ArrayList<Elevator> getElevatorsInFloor(int floor) {
         ArrayList<Elevator> elevatorsInFloor = new ArrayList<>();
         for (Elevator elevator : this.elevators) {
-            if (elevator.getCurrentFloor() == floor && elevator.status != ElevatorStatus.BROKEN) {
+            if (elevator.getCurrentFloor() == floor && elevator.getStatus() != ElevatorStatus.BROKEN) {
                 elevatorsInFloor.add(elevator);
             }
         }
-        if (this.elevatorBackUp.getCurrentFloor() == floor && this.elevatorBackUp.status != ElevatorStatus.OFF) {
+        if (this.elevatorBackUp.getCurrentFloor() == floor && this.elevatorBackUp.getStatus() != ElevatorStatus.OFF) {
             elevatorsInFloor.add(this.elevatorBackUp);
         }
 
@@ -265,10 +265,6 @@ public class JarvisSystem {
 
     public ElevatorBackUp getElevatorBackUp() {
         return elevatorBackUp;
-    }
-
-    public ElevatorBreaker getElevatorBreaker() {
-        return elevatorBreaker;
     }
 
     public synchronized ArrayList<JarvisRemoteControl> getRemotes() {

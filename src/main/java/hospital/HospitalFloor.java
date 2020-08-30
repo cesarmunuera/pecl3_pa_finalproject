@@ -9,8 +9,6 @@ public class HospitalFloor {
 
     private int floor;
     private JarvisRemoteControl jarvisRemoteControl;
-    private boolean elevatorInFloor = false;
-    private boolean waitingElevator = false;
 
     public HospitalFloor(int floor, JarvisRemoteControl jarvisRemoteControl) {
         this.floor = floor;
@@ -35,18 +33,6 @@ public class HospitalFloor {
 
     public int getFloor() {
         return floor;
-    }
-
-    public JarvisRemoteControl getJarvisRemoteControl() {
-        return jarvisRemoteControl;
-    }
-
-    public boolean isElevatorInFloor() {
-        return elevatorInFloor;
-    }
-
-    public boolean isWaitingElevator() {
-        return waitingElevator;
     }
 
 }

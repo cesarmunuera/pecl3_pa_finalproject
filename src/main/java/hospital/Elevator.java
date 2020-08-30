@@ -54,7 +54,6 @@ public class Elevator extends Thread {
 
     public int peopleInElevator() {
         return space.size();
-
     }
 
     public void turnOn() {
@@ -239,9 +238,8 @@ public class Elevator extends Thread {
                 move();
             }
 
-            if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MAX) {
-                this.direction = ElevatorDirection.NONE;
-            } else if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MIN) {
+            if (this.currentFloor == Configuration.HOSPITAL_FLOOR_MAX || 
+            		this.currentFloor == Configuration.HOSPITAL_FLOOR_MIN) {
                 this.direction = ElevatorDirection.NONE;
             }
         }
@@ -249,7 +247,7 @@ public class Elevator extends Thread {
 
     private void waitInFloor() throws InterruptedException {
         if (Configuration.LOGGING_ON) {
-            logger.info(this.toString() + " arrived to floor " + this.currentFloor);
+            logger.info(toString() + " arrived to floor " + this.currentFloor);
         }
         this.status = ElevatorStatus.EXITING;
         sleep((long) EXITING_MS);
@@ -362,24 +360,8 @@ public class Elevator extends Thread {
         return currentFloor;
     }
 
-    public int getPreviousFloor() {
-        return previousFloor;
-    }
-
-    public Semaphore getSpaceSemaphore() {
-        return spaceSemaphore;
-    }
-
-    public JarvisSystem getJarvisSystem() {
-        return jarvisSystem;
-    }
-
     public synchronized ArrayList<Person> getSpace() {
         return space;
-    }
-
-    public Map<Integer, Boolean> getRequestedFloors() {
-        return requestedFloors;
     }
 
     public ElevatorStatus getStatus() {

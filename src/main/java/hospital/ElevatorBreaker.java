@@ -36,7 +36,7 @@ public class ElevatorBreaker extends Thread {
         while (!choosen) {
             randomNum = this.random.nextInt(this.elevators.size());
             elevator = this.elevators.get(randomNum);
-            if (elevator.status == ElevatorStatus.STOPPED) {
+            if (elevator.getStatus() == ElevatorStatus.STOPPED) {
                 elevator.interrupt();
                 choosen = true;
             }
@@ -49,18 +49,6 @@ public class ElevatorBreaker extends Thread {
             sleepRandomTime();
             brokeRandomElevator();
         }
-    }
-
-    public List<Elevator> getElevators() {
-        return elevators;
-    }
-
-    public ElevatorBackUp getElevatorBackUp() {
-        return elevatorBackUp;
-    }
-
-    public Random getRandom() {
-        return random;
     }
 
 }

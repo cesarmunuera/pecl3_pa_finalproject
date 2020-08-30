@@ -45,10 +45,6 @@ public class Hospital {
         return selectedFloor;
     }
 
-    public ArrayList<HospitalFloor> getFloors() {
-        return floors;
-    }
-
     public JarvisSystem getJarvisSystem() {
         return jarvisSystem;
     }

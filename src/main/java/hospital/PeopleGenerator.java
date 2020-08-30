@@ -67,12 +67,4 @@ public class PeopleGenerator extends Thread {
         }
     }
 
-    public Hospital getHospital() {
-        return hospital;
-    }
-
-    public int getPeopleCounter() {
-        return peopleCounter;
-    }
-
 }

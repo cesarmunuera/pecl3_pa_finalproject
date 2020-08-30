@@ -87,24 +87,12 @@ public class JarvisRemoteControl {
         return this.jarvisSystem.getElevatorsInFloor(floor);
     }
 
-    public JarvisSystem getJarvisSystem() {
-        return jarvisSystem;
-    }
-
     public int getValue() {
         return value;
     }
 
     public boolean isActive() {
         return active;
-    }
-
-    public boolean isElevatorInFloor() {
-        return elevatorInFloor;
-    }
-
-    public Condition getElevatorInFloorCondition() {
-        return elevatorInFloorCondition;
     }
 
     public int getPeopleWaiting() {
