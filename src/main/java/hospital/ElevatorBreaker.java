@@ -1,19 +1,23 @@
+package hospital;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class ElevatorBreaker extends Thread {
 
-    ArrayList<Elevator> elevators;
-    ElevatorBackUp elevatorBackUp;
-    Random random = new Random();
+    private static final Logger logger = Logger.getLogger(Logging.LOG_NAME);
 
-    public ElevatorBreaker(ArrayList<Elevator> elevators, ElevatorBackUp elevatorBackUp) {
+    private List<Elevator> elevators;
+    private ElevatorBackUp elevatorBackUp;
+    private Random random = new Random();
+
+    public ElevatorBreaker(List<Elevator> elevators, ElevatorBackUp elevatorBackUp) {
         this.elevators = elevators;
         this.elevatorBackUp = elevatorBackUp;
     }
 
-    public void sleepRandomTime() {
+    private void sleepRandomTime() {
         double randomTime = (Math.random() * (Configuration.ELEVATOR_BROKE_MAX_MS - Configuration.ELEVATOR_BROKE_MIN_MS + 1)
                 + Configuration.ELEVATOR_BROKE_MIN_MS);
 
@@ -24,14 +28,16 @@ public class ElevatorBreaker extends Thread {
         }
     }
 
-    public void brokeRandomElevator() {
+    private void brokeRandomElevator() {
         boolean choosen = false;
+        int randomNum;
+        Elevator elevator;
 
         while (!choosen) {
-            int randomNum = this.random.nextInt(this.elevators.size());
-            Elevator elevator = this.elevators.get(randomNum);
-            if (elevator.status != ElevatorStatus.BROKEN) {
-                elevator.broke();
+            randomNum = this.random.nextInt(this.elevators.size());
+            elevator = this.elevators.get(randomNum);
+            if (elevator.getStatus() == ElevatorStatus.STOPPED) {
+                elevator.interrupt();
                 choosen = true;
             }
         }
@@ -42,7 +48,6 @@ public class ElevatorBreaker extends Thread {
         while (true) {
             sleepRandomTime();
             brokeRandomElevator();
-
         }
     }
 

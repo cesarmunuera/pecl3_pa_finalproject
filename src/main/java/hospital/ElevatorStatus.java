@@ -1,3 +1,4 @@
+package hospital;
 
 public enum ElevatorStatus {
 
